@@ -99,15 +99,12 @@ public class MovementLogger_CSVWriter : MonoBehaviour
             return;
         }
 
-        Debug.LogWarning("TEHEE");
         string folderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "CSV");
         Directory.CreateDirectory(folderPath);
 
-        Debug.LogWarning("OHOHOHOOOO");
         string timestamp = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
         filePath = Path.Combine(folderPath, timestamp + "_MovementLog.csv");
 
-        Debug.LogWarning("RAHHHH");
         // Write header
         using (StreamWriter writer = new StreamWriter(filePath, false))
         {
@@ -115,8 +112,7 @@ public class MovementLogger_CSVWriter : MonoBehaviour
         }
 
 
-        Debug.LogWarning("YIPEEEE!");
-        Debug.LogWarning("✅ CSV initialized at: " + filePath);
+        Debug.LogWarning("CSV initialized at: " + filePath);
     }
 
     void Update()

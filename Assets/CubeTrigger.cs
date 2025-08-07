@@ -24,7 +24,7 @@ public class CubeTrigger : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
-        if (counterCube == 0)
+        if (counterCube == 0 & !trialManager.onBreak & !trialManager.isExperimentComplete)
         {
             counterCube = -1;
             // Debug.Log("OBJECT ENTERED");
@@ -36,7 +36,7 @@ public class CubeTrigger : MonoBehaviour
 
             timeHitCube = Time.time;
 
-            Debug.LogWarning($"Cube {cubeIndex} touched.");
+            //Debug.LogWarning($"Cube {cubeIndex} touched.");
             EventLogger_CSVWriter.Log($"Cube Touched: {cubeIndex}");
 
 

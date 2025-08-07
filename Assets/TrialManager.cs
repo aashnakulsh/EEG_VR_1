@@ -10,6 +10,7 @@ public class TrialManager : MonoBehaviour
     public Color highlightColor;
     public Color defaultColor;
     public Color ghostColor = Color.green;
+    public bool onBreak = false;
 
     // Generic trial info
     public int totalTrials;
@@ -80,7 +81,7 @@ public class TrialManager : MonoBehaviour
         ghostCubeIndex = newGhost;
 
         EventLogger_CSVWriter.Log($"Ghost Cube Picked: {ghostCubeIndex}");
-        Debug.LogWarning($"🔄🔄🔄 New ghost cube is at index {ghostCubeIndex}.");
+        Debug.LogError($"🔄🔄🔄 New ghost cube is at index {ghostCubeIndex}.");
     }
 
     // called in planetrigger script
@@ -93,6 +94,7 @@ public class TrialManager : MonoBehaviour
             // Run break!
             Debug.LogWarning("START BREAK");
             // EventLogger_CSVWriter.Log("Start Break"); IS DONE IN 
+            onBreak = true;
             tookBreak = true;
 
             yield return breakUI.ShowBreakUI(breakTime, currentTrial, totalTrials, score, totalPossibleScore);
@@ -100,7 +102,7 @@ public class TrialManager : MonoBehaviour
         }
         if (currentTrial >= totalTrials)
         {
-            Debug.LogWarning("✅ Experiment complete.");
+            Debug.LogError("Experiment complete");
             EventLogger_CSVWriter.Log("Experiment Complete");
             isExperimentComplete = true;
 

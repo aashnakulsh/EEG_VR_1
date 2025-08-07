@@ -8,6 +8,8 @@ using UnityEngine.InputSystem;
 
 public class BreakUIController : MonoBehaviour
 {
+    public TrialManager trialManager;
+
     [SerializeField] private GameObject breakPanel;         // The parent panel GameObject
     [SerializeField] private TextMeshProUGUI breakMessageText; // Text for "Break for X seconds"
     [SerializeField] private TextMeshProUGUI countdownText;    // Text for countdown numbers
@@ -36,8 +38,14 @@ public class BreakUIController : MonoBehaviour
     public IEnumerator ShowBreakUI(int breakSeconds, int trialNum, int totalTrials, int score, int totalPossibleScore)
     {
         float breakStartTime = Time.time;
+        spacePressed = false;
 
         breakPanel.SetActive(true);
+
+        Debug.LogError($"Break Start for {breakSeconds} seconds");
+        Debug.LogError($"Trial {trialNum} / {totalTrials}");
+        Debug.LogError( $"Score: {score} / {totalPossibleScore}");
+
         EventLogger_CSVWriter.Log($"Break Start for {breakSeconds} seconds");
         breakMessageText.text = $"Break for {breakSeconds} seconds";
 
@@ -71,6 +79,7 @@ public class BreakUIController : MonoBehaviour
         float breakEndTime = Time.time;
         totalBreakDuration = breakEndTime - breakStartTime;
 
+        trialManager.onBreak = false;
         breakPanel.SetActive(false);
         EventLogger_CSVWriter.Log("Break Over");
     }
