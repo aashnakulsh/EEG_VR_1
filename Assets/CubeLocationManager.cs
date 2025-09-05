@@ -17,6 +17,7 @@ public class CubeLocationManager : MonoBehaviour
     {
         if (elbowPoint != null)
         {
+            // gets vector position of elbowPoint
             elbowPosition = elbowPoint.transform.position;
         }
         else
@@ -30,86 +31,47 @@ public class CubeLocationManager : MonoBehaviour
         PlacePlaneAboveElbow();
     }
 
+    // Places 5 cubes in an arc according to the length of the participant's forearm 
     void PlaceCubesInArc()
     {
+        // must have 5 cubes assigned (NOTE: can change later if we want more cubes)
         if (cubes.Length != 5)
         {
             Debug.LogError("Must assign 5 cubes");
             return;
         }
 
-        float arcRadius = tipToElbowLength;
-        int numCubes = cubes.Length;
+        // ensures distance b/t cubes and elbow point is the participant's forearm length (index fingertip to elbow)
+        float arcRadius = tipToElbowLength;         
 
-        // Get table top Y only once
+        // Get table top's Y position 
         float tableTopY = table.GetComponent<Renderer>().bounds.max.y;
-
-        for (int i = 0; i < numCubes; i++)
+        
+        // sets the position of each cube
+        for (int i = 0; i < cubes.Length; i++)
         {
-            float angleDeg = i * (90f / (numCubes - 1));
+            // NOTE: gets cube's angle degree in the arc... (added 10f so that the entire arc is shifted to the right) 
+            float angleDeg = (i * (90f / (cubes.Length - 1))) + 10f;
             float angleRad = angleDeg * Mathf.Deg2Rad;
 
-            // Horizontal arc only (flat on XZ plane)
+            // Horizontal arc 
             Vector3 direction = new Vector3(-Mathf.Sin(angleRad), 0f, Mathf.Cos(angleRad));
-            Vector3 arcCenter = new Vector3(elbowPosition.x, tableTopY, elbowPosition.z); // elbow Y ignored
+            Vector3 arcCenter = new Vector3(elbowPosition.x, tableTopY, elbowPosition.z); 
             Vector3 cubePos = arcCenter + direction * arcRadius;
 
-            // Raise cube Y so it sits on top of table
+            // Raise cube's Y pos so it sits on top of table
             float cubeHeight = cubes[i].GetComponent<Renderer>().bounds.size.y;
             cubePos.y = tableTopY + (cubeHeight / 2f);
 
             cubes[i].transform.position = cubePos;
 
-            // Make it look at elbow (horizontally only)
+            // Make cube look at elbow (horizontally only)
             Vector3 lookTarget = new Vector3(elbowPosition.x, cubePos.y, elbowPosition.z);
             cubes[i].transform.LookAt(lookTarget);
         }
     }
 
-
-    //void PlaceCubesInArc()
-    //{
-    //    if (cubes.Length != 5)
-    //    {
-    //        Debug.LogError("Must assign 5 cubes");
-    //        return;
-    //    }
-
-    //    float arcRadius = tipToElbowLength;
-    //    int numCubes = cubes.Length;
-
-    //    for (int i = 0; i < numCubes; i++)
-    //    {
-    //        // Go from 0 degrees to 90 degrees
-    //        float angleDeg = i * (90f / (numCubes - 1)); // 0, 22.5, 45, 67.5, 90
-    //        float angleRad = angleDeg * Mathf.Deg2Rad;
-
-    //        // Invert direction to fan to the left (negative X)
-    //        Vector3 direction = new Vector3(-Mathf.Sin(angleRad), 0f, Mathf.Cos(angleRad));
-    //        Vector3 cubePos = elbowPosition + direction * arcRadius;
-
-
-
-    //        //cubes[i].transform.position = cubePos;
-
-    //        // Get the top Y of the table using its Renderer
-    //        float tableTopY = table.GetComponent<Renderer>().bounds.max.y;
-
-    //        // Get the height of the cube
-    //        float cubeHeight = cubes[i].GetComponent<Renderer>().bounds.size.y;
-
-    //        // Set Y so bottom of cube rests on table
-    //        cubePos.y = tableTopY + (cubeHeight / 2f);
-
-    //        cubes[i].transform.position = cubePos;
-
-    //        //cubes[i].transform.LookAt(elbowPosition);
-    //        Vector3 lookTarget = new Vector3(elbowPosition.x, cubes[i].transform.position.y, elbowPosition.z);
-    //        cubes[i].transform.LookAt(lookTarget);
-
-    //    }
-    //}
-
+    // Places Plane's Y at the height of the participant's arm so that they are forced to the "reset" position
     void PlacePlaneAboveElbow()
     {
         if (plane == null)
@@ -117,11 +79,6 @@ public class CubeLocationManager : MonoBehaviour
             Debug.LogError("plane not assigned!");
             return;
         }
-
-        //float finalOffset = tipToElbowLength - planeOffsetBelowTipToElbow;
-        //Debug.LogError("Placing plane at elbow Y + offset: " + elbowPosition.y + " + " + finalOffset);
-
-
         Vector3 planePos = elbowPosition + Vector3.up * (tipToElbowLength - planeOffsetBelowTipToElbow);
         plane.transform.position = planePos;
     }

@@ -10,17 +10,15 @@ public class BreakUIController : MonoBehaviour
 {
     public TrialManager trialManager;
 
-    [SerializeField] private GameObject breakPanel;         // The parent panel GameObject
+    [SerializeField] private GameObject breakPanel;         //  parent panel 
     [SerializeField] private TextMeshProUGUI breakMessageText; // Text for "Break for X seconds"
     [SerializeField] private TextMeshProUGUI countdownText;    // Text for countdown numbers
 
-    [SerializeField] private TextMeshProUGUI trialCountText;
-    [SerializeField] private TextMeshProUGUI scoreText;
+    [SerializeField] private TextMeshProUGUI trialCountText;    // Text for current trial number
+    [SerializeField] private TextMeshProUGUI scoreText;         // Text for score 
 
-    public float totalBreakDuration;
-
-
-    private InputAction continueAction;
+    public float totalBreakDuration;        // includes minimum break time + optional break time from the participant (in seconds)
+    private InputAction continueAction;     
     private bool spacePressed;
 
     private void Awake()
@@ -35,6 +33,11 @@ public class BreakUIController : MonoBehaviour
     {
         breakPanel.SetActive(false);
     }
+
+    // Shows trial statistics () and a countdown for participant
+    // After the minimum break time, participant can press the spacebar to continue to next trial
+    // Called from TrialManager.cs
+    // Is a coroutine 
     public IEnumerator ShowBreakUI(int breakSeconds, int trialNum, int totalTrials, int score, int totalPossibleScore)
     {
         float breakStartTime = Time.time;
@@ -44,7 +47,7 @@ public class BreakUIController : MonoBehaviour
 
         Debug.LogError($"Break Start for {breakSeconds} seconds");
         Debug.LogError($"Trial {trialNum} / {totalTrials}");
-        Debug.LogError( $"Score: {score} / {totalPossibleScore}");
+        Debug.LogError($"Score: {score} / {totalPossibleScore}");
 
         EventLogger_CSVWriter.Log($"Break Start for {breakSeconds} seconds");
         breakMessageText.text = $"Break for {breakSeconds} seconds";
@@ -60,22 +63,18 @@ public class BreakUIController : MonoBehaviour
 
         // Done with minimum break
         countdownText.text = "Press SPACE when ready";
-        // progressBar.interactable = false; // just in case
 
         yield return new WaitForEndOfFrame(); // prevent held-space skip
 
-        // // Wait until space is pressed
-        // while (!Input.GetKeyDown(KeyCode.Space))
-        // {
-        //     yield return null;
-        // }
-
-        // Wait until space is pressed using the new system
+        // Waits until space is pressed to end break
         while (!spacePressed)
         {
             yield return null;
         }
 
+        // NOTE: to get here, space must have been pressed
+
+        //gets break statistics
         float breakEndTime = Time.time;
         totalBreakDuration = breakEndTime - breakStartTime;
 
@@ -84,6 +83,7 @@ public class BreakUIController : MonoBehaviour
         EventLogger_CSVWriter.Log("Break Over");
     }
 
+    // Called from TrialManager.cs when experiment is complete
     public void ShowExperimentComplete()
     {
         breakPanel.SetActive(true);

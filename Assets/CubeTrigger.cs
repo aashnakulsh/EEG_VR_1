@@ -4,67 +4,63 @@ using System.Collections;
 public class CubeTrigger : MonoBehaviour
 {
     private Renderer objectRenderer;
-    // public Color newColor = Color.yellow;
-    public Color originalColor;
+    // public Color newColor = Color.yellow;            // used for debugging
 
     public PlaneTrigger planeTrigger;
     public TrialManager trialManager;
     public BreakUIController buic;
     public int cubeIndex;
-    private int counterCube;
+
+    // used to determine whether or not to trigger cube-related scripts (cube can only be hit after "resetting", 
+    // so cubeFlag = 0 if participant has successful reset or -1 if participant has not reset)
+    // currently, resetting is done by the participant triggering the plane
+    // also prevents multilpe triggers of cube-related scripts (due to there being multiple colliderers on hand) 
+    private int cubeFlag;            
     private float timeHitCube;
     private AudioSource aud;
 
     void Start()
     {
         objectRenderer = GetComponent<Renderer>();
-        // originalColor = objectRenderer.material.color;
-        counterCube = 0;
+        cubeFlag = 0;
         aud = GetComponent<AudioSource>();
     }
     private void OnTriggerEnter(Collider other)
     {
-        if (counterCube == 0 & !trialManager.onBreak & !trialManager.isExperimentComplete)
+        if (cubeFlag == 0 & !trialManager.onBreak & !trialManager.isExperimentComplete)
         {
-            counterCube = -1;
+            cubeFlag = -1;
+            // Debugging code:
             // Debug.Log("OBJECT ENTERED");
-            // sets cube to green when hand is in it -- used for debeugging
+            // sets cube to newColor when hand is in it -- used for debeugging
             // objectRenderer.material.color = newColor;
 
-             aud.Play(); // Low-latency audio ping play
+            aud.Play(); // plays ping audio
 
-
+            // getting statistics for logging
             timeHitCube = Time.time;
+            EventLogger_CSVWriter.Log($"Cube Touched: {cubeIndex}");  
 
-            //Debug.LogWarning($"Cube {cubeIndex} touched.");
-            EventLogger_CSVWriter.Log($"Cube Touched: {cubeIndex}");
+            planeTrigger.ResetPlaneFlag();               // Allow plane to be touched again by reseting plane trigger counter
+            trialManager.ClearCubeHighlight();                    // Clears highlight
 
-
-
-            // Allow plane to be touched again by reseting plane trigger counter
-            planeTrigger?.ResetCounterPlane();
-
-            // Clear highlight
-            EventLogger_CSVWriter.Log($"Cubes Reset");
-            trialManager?.ResetCubes();
-
-            //log trial
+            // getting statistics for logging
             float reactionTime = timeHitCube - planeTrigger.timeHitPlane;
             if (trialManager.tookBreak) {reactionTime = reactionTime-buic.totalBreakDuration;}
-
             int touchedIndex = trialManager.cubes.IndexOf(this.gameObject);
 
+            // Logs trial
             trialManager.trialLogger.LogTrial(
-                trialManager.CurrentTrialNumber,        // trial #
-                trialManager.CurrentTargetCubeIndex == trialManager.ghostCubeIndex, //true if target trial (ie. target/highlighted cube = ghost cube)
+                trialManager.currentTrial,        // trial #
+                trialManager.currentTargetCubeIndex == trialManager.ghostCubeIndex, //true if target trial (ie. target/highlighted cube = ghost cube)
                 trialManager.ghostCubeIndex,            // ghost cube index
                 touchedIndex,                           // index of cube that was hit
-                trialManager.CurrentTargetCubeIndex,    // index of target cube/cube that should have been hit
-                touchedIndex != trialManager.CurrentTargetCubeIndex,    // T if hit cube != target => there was a mismatch
+                trialManager.currentTargetCubeIndex,    // index of target cube/cube that should have been hit
+                touchedIndex != trialManager.currentTargetCubeIndex,    // T if hit cube != target => there was a mismatch
                 reactionTime                            // time between user touching plane (activiating trial) and hitting cube (finishing trial)
             );
 
-            // score calculations
+            // Score Calculations
             if (reactionTime <= 1)
             {
                 trialManager.score += 5;
@@ -87,20 +83,22 @@ public class CubeTrigger : MonoBehaviour
         }
     }
 
+    // used for debugging:
     // private void OnTriggerStay(Collider other) {
     //     // Debug.Log("OBJECT WITHIN");
     // }
 
     private void OnTriggerExit(Collider other)
     {
+        // used for debgugging:
         // Debug.Log("OBJECT EXITED");
         // TODO: is this line needed? i think not
-        objectRenderer.material.color = originalColor;
+        objectRenderer.material.color = trialManager.defaultColor;
     }
 
-    public void ResetCounterCube()
+    public void ResetCubeFlag()
     {
-        counterCube = 0;
+        cubeFlag = 0;
     }
 
 }

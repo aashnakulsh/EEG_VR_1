@@ -6,43 +6,41 @@ public class PlaneTrigger : MonoBehaviour
 {
     public List<CubeTrigger> cubeTriggers;
     public TrialManager trialManager;
-    private int counterPlane;
+    private int planeFlag;
 
     public float timeHitPlane;
 
     void Start()
     {
-        counterPlane = 0;
+        planeFlag = 0;
     }
 
     private void OnTriggerEnter(Collider other)
     {
-
-        if (counterPlane == 0)
+        if (planeFlag == 0)
         {
-            // sets counterPlane to -1 so that the Plane can't be triggered multiple times
-            counterPlane = -1;
-            // Debug.Log("PLANE TRIGGERED");
+            // sets planeFlag to -1 so that the Plane can't be triggered multiple times
+            planeFlag = -1;
             Debug.LogWarning("Plane triggered: advancing to next trial");
             EventLogger_CSVWriter.Log("Plane Triggered");
 
             timeHitPlane = Time.time;
 
-            // Reset all cube triggers counters (cubes have a similar system to the counterPlane variable)
+            // Reset all cube triggers counters (cubes have a similar system to the planeFlag variable)
             foreach (var cubeTrigger in cubeTriggers)
             {
-                cubeTrigger?.ResetCounterCube();
+                cubeTrigger.ResetCubeFlag();
             }
 
-            // begins next trial
-            StartCoroutine(trialManager?.StartNextTrial());
+            // Begins next trial
+            StartCoroutine(trialManager.StartNextTrial());
         }
     }
 
-    // called in CubeTrigger.cs to reset counterPlane (similar to how we reset cubeTrigger on line 27)
-    public void ResetCounterPlane()
+    // called in CubeTrigger.cs to reset planeFlag (similar to how we reset cubeTrigger on line 27)
+    public void ResetPlaneFlag()
     {
-        counterPlane = 0;
+        planeFlag = 0;
     }
 
 }
