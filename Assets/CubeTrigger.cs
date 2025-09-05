@@ -50,7 +50,7 @@ public class CubeTrigger : MonoBehaviour
             int touchedIndex = trialManager.cubes.IndexOf(this.gameObject);
 
             // Logs trial
-            trialManager.trialLogger.LogTrial(
+            TrialLogger_CSVWriter.LogTrial(
                 trialManager.currentTrial,        // trial #
                 trialManager.currentTargetCubeIndex == trialManager.ghostCubeIndex, //true if target trial (ie. target/highlighted cube = ghost cube)
                 trialManager.ghostCubeIndex,            // ghost cube index

@@ -10,50 +10,36 @@ public class TrialManager : MonoBehaviour
     public Color highlightColor;
     public Color defaultColor;
     public Color ghostColor = Color.green;
-    public bool onBreak = false;
 
     // Generic trial info
-    public int totalTrials;
-    public int ghostUpdateInterval;
-    public float targetTrialPercentage = 0.2f;
+    public int totalTrials;                             // # of total trials
+    public int ghostUpdateInterval;                     // how often to update ghost cube's index
+    public float targetTrialPercentage = 0.2f;          // percentage of trials that will have ghost cube
 
     public bool isExperimentComplete = false;
 
     // Break info
+    public bool onBreak = false;
     public int breakInterval;
-    [SerializeField] private BreakUIController breakUI;  // drag the BreakUIController GameObject in inspector
-    public int breakTime;
+    [SerializeField] private BreakUIController breakUI; 
+    public int minimumBreakTime;               
     public bool tookBreak;
 
     // Statistics to Keep Track of
-    private int currentTrial = 0;
+    public int currentTrial = 0;
     public int ghostCubeIndex = -1;
-    private List<int> targetTrialIndices = new List<int>();
-
-    private System.Random rng = new System.Random();
-
-    public TrialLogger trialLogger;
-    // public EventLogger eventLogger;
-
     public int score;
     public int totalPossibleScore;
+    public int currentTargetCubeIndex;
+    public float TrialStartTime;
 
-
-    public int CurrentTrialNumber => currentTrial;
-    public int CurrentTargetCubeIndex { get; private set; }
-    public float TrialStartTime { get; private set; }
-
-    private void SetTrialInfo(int targetIndex)
-    {
-        CurrentTargetCubeIndex = targetIndex;
-        TrialStartTime = Time.time;
-    }
-    //end of test
-
+    // Setup
+    private List<int> targetTrialIndices = new List<int>();
+    private System.Random rng = new System.Random();
 
     private void Start()
     {
-        trialLogger.Init();
+        TrialLogger_CSVWriter.Init();
         EventLogger_CSVWriter.Init();
         GenerateTargetTrials();
         PickNewGhostCube(); // initial ghost
@@ -84,7 +70,7 @@ public class TrialManager : MonoBehaviour
         Debug.LogError($"🔄🔄🔄 New ghost cube is at index {ghostCubeIndex}.");
     }
 
-    // called in planetrigger script
+    // called in planeTrigger.cs as a coroutine
     public IEnumerator StartNextTrial()
     {
         tookBreak = false;
@@ -97,7 +83,7 @@ public class TrialManager : MonoBehaviour
             onBreak = true;
             tookBreak = true;
 
-            yield return breakUI.ShowBreakUI(breakTime, currentTrial, totalTrials, score, totalPossibleScore);
+            yield return breakUI.ShowBreakUI(minimumBreakTime, currentTrial, totalTrials, score, totalPossibleScore);
             // yield return new WaitForSeconds(breakTime);
         }
         if (currentTrial >= totalTrials)
@@ -119,23 +105,25 @@ public class TrialManager : MonoBehaviour
         }
 
         // Determine which cube to highlight
-        int cubeIndexToHighlight;
         bool isTargetTrial = targetTrialIndices.Contains(currentTrial);
 
         if (isTargetTrial)
         {
-            cubeIndexToHighlight = ghostCubeIndex;
+            currentTargetCubeIndex = ghostCubeIndex;
         }
         else
         {
             // Choose a non-ghost cube
             List<int> options = Enumerable.Range(0, cubes.Count).Where(i => i != ghostCubeIndex).ToList();
-            cubeIndexToHighlight = options[rng.Next(options.Count)];
+            currentTargetCubeIndex = options[rng.Next(options.Count)];
         }
 
         EventLogger_CSVWriter.Log($"Trial {currentTrial + 1} Begins");
-        SetTrialInfo(cubeIndexToHighlight);
-        HighlightCube(cubeIndexToHighlight);
+
+        // sets trial info
+        TrialStartTime = Time.time;
+
+        HighlightCube(currentTargetCubeIndex);
         currentTrial++;
     }
 
@@ -166,7 +154,7 @@ public class TrialManager : MonoBehaviour
     }
 
     // Called in CubeTrigger.cs in OnTriggerEnter function
-    public void ResetCubes()
+    public void ClearCubeHighlight()
     {
         foreach (var cube in cubes)
         {

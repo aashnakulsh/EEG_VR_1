@@ -2,12 +2,12 @@ using UnityEngine;
 using System.IO;
 using System;
 
-public class TrialLogger : MonoBehaviour
+public class TrialLogger_CSVWriter : MonoBehaviour
 {
-    [SerializeField] public string participantID;
-    private string filePath;
+    [SerializeField] public static string participantID;
+    private static string filePath;
 
-    public void Init()
+    public static void Init()
     {
         string folderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "CSV");
         Directory.CreateDirectory(folderPath);
@@ -21,7 +21,7 @@ public class TrialLogger : MonoBehaviour
         }
     }
 
-    public void LogTrial(int trialNumber, bool targetTrial, int ghostCube, int hitCube, int targetCube, bool mismatch, float reactionTime)
+    public static void LogTrial(int trialNumber, bool targetTrial, int ghostCube, int hitCube, int targetCube, bool mismatch, float reactionTime)
     {
         string time = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
         using (StreamWriter writer = new StreamWriter(filePath, true))
