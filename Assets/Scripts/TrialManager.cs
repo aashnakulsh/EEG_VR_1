@@ -28,8 +28,8 @@ public class TrialManager : MonoBehaviour
     // Statistics to Keep Track of
     public int currentTrial = 0;
     public int ghostCubeIndex = -1;
-    public int score;
-    public int totalPossibleScore;
+    public int score = -25;
+    public int totalPossibleScore = -25;
     public int currentTargetCubeIndex;
     public float TrialStartTime;
 
@@ -90,7 +90,7 @@ public class TrialManager : MonoBehaviour
             EventLogger_CSVWriter.Log("Experiment Complete");
             isExperimentComplete = true;
 
-            breakUI.ShowExperimentComplete();
+            breakUI.ShowExperimentComplete(currentTrial, totalTrials, score, totalPossibleScore);
             yield break;
         }
 

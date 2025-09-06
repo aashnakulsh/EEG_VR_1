@@ -52,7 +52,7 @@ public class BreakUIController : MonoBehaviour
         EventLogger_CSVWriter.Log($"Break Start for {breakSeconds} seconds");
         breakMessageText.text = $"Break for {breakSeconds} seconds";
 
-        trialCountText.text = $"Trial {trialNum} / {totalTrials}";
+        trialCountText.text = $"Trial: {trialNum} / {totalTrials}";
         scoreText.text = $"Score: {score} / {totalPossibleScore}";
 
         for (int i = breakSeconds; i > 0; i--)
@@ -84,11 +84,13 @@ public class BreakUIController : MonoBehaviour
     }
 
     // Called from TrialManager.cs when experiment is complete
-    public void ShowExperimentComplete()
+    public void ShowExperimentComplete(int trialNum, int totalTrials, int score, int totalPossibleScore)
     {
         breakPanel.SetActive(true);
         breakMessageText.text = "Experiment Complete";
         countdownText.text = "";
+        trialCountText.text = $"Trial: {trialNum} / {totalTrials}";
+        scoreText.text = $"Score: {score} / {totalPossibleScore}";
     }
 
     private void OnDestroy()

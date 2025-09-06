@@ -49,30 +49,33 @@ public class CubeTrigger : MonoBehaviour
             if (trialManager.tookBreak) {reactionTime = reactionTime-buic.totalBreakDuration;}
             int touchedIndex = trialManager.cubes.IndexOf(this.gameObject);
 
-            // Logs trial
-            TrialLogger_CSVWriter.LogTrial(
-                trialManager.currentTrial,        // trial #
-                trialManager.currentTargetCubeIndex == trialManager.ghostCubeIndex, //true if target trial (ie. target/highlighted cube = ghost cube)
-                trialManager.ghostCubeIndex,            // ghost cube index
-                touchedIndex,                           // index of cube that was hit
-                trialManager.currentTargetCubeIndex,    // index of target cube/cube that should have been hit
-                touchedIndex != trialManager.currentTargetCubeIndex,    // T if hit cube != target => there was a mismatch
-                reactionTime                            // time between user touching plane (activiating trial) and hitting cube (finishing trial)
-            );
+            if (trialManager.currentTrial != 0)
+            {
+                // Logs trial
+                TrialLogger_CSVWriter.LogTrial(
+                    trialManager.currentTrial,        // trial #
+                    trialManager.currentTargetCubeIndex == trialManager.ghostCubeIndex, //true if target trial (ie. target/highlighted cube = ghost cube)
+                    trialManager.ghostCubeIndex,            // ghost cube index
+                    touchedIndex,                           // index of cube that was hit
+                    trialManager.currentTargetCubeIndex,    // index of target cube/cube that should have been hit
+                    touchedIndex != trialManager.currentTargetCubeIndex,    // T if hit cube != target => there was a mismatch
+                    reactionTime                            // time between user touching plane (activiating trial) and hitting cube (finishing trial)
+                );
+            }
 
             // Score Calculations
-            if (reactionTime <= 1)
-            {
-                trialManager.score += 5;
-            }
-            else if (reactionTime <= 2)
-            {
-                trialManager.score += 3;
-            }
-            else
-            {
-                trialManager.score += 1;
-            }
+                if (reactionTime <= 1)
+                {
+                    trialManager.score += 5;
+                }
+                else if (reactionTime <= 2)
+                {
+                    trialManager.score += 3;
+                }
+                else
+                {
+                    trialManager.score += 1;
+                }
 
             trialManager.totalPossibleScore += 5;
 
@@ -88,13 +91,12 @@ public class CubeTrigger : MonoBehaviour
     //     // Debug.Log("OBJECT WITHIN");
     // }
 
-    private void OnTriggerExit(Collider other)
-    {
+    // private void OnTriggerExit(Collider other)
+    // {
         // used for debgugging:
         // Debug.Log("OBJECT EXITED");
-        // TODO: is this line needed? i think not
-        objectRenderer.material.color = trialManager.defaultColor;
-    }
+        // objectRenderer.material.color = trialManager.defaultColor;
+    // }
 
     public void ResetCubeFlag()
     {
