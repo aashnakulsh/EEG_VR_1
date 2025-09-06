@@ -42,7 +42,7 @@ public class TrialManager : MonoBehaviour
         TrialLogger_CSVWriter.Init();
         EventLogger_CSVWriter.Init();
         GenerateTargetTrials();
-        PickNewGhostCube(); // initial ghost
+        PickNewGhostCube(); 
     }
 
     private void GenerateTargetTrials()
@@ -76,18 +76,16 @@ public class TrialManager : MonoBehaviour
         tookBreak = false;
         if ((currentTrial != 0) && (currentTrial != totalTrials) && (currentTrial % breakInterval == 0))
         {
-            // StartCoroutine(runBreak());
-            // Run break!
+            // Runs break
             Debug.LogWarning("START BREAK");
-            // EventLogger_CSVWriter.Log("Start Break"); IS DONE IN 
             onBreak = true;
             tookBreak = true;
 
             yield return breakUI.ShowBreakUI(minimumBreakTime, currentTrial, totalTrials, score, totalPossibleScore);
-            // yield return new WaitForSeconds(breakTime);
         }
         if (currentTrial >= totalTrials)
         {
+            // Experiment is complete
             Debug.LogError("Experiment complete");
             EventLogger_CSVWriter.Log("Experiment Complete");
             isExperimentComplete = true;
@@ -96,21 +94,19 @@ public class TrialManager : MonoBehaviour
             yield break;
         }
 
-
-
-        // Change ghost cube if needed
+        // Change ghost cube at set intervals
         if (currentTrial % ghostUpdateInterval == 0 && currentTrial != 0)
         {
             PickNewGhostCube();
         }
 
-        // Determine which cube to highlight
+        // if it's a target trial, determines highlights ghost cube
         bool isTargetTrial = targetTrialIndices.Contains(currentTrial);
-
         if (isTargetTrial)
         {
             currentTargetCubeIndex = ghostCubeIndex;
         }
+        // not a target trial, so determines a non-ghost cube to highlight
         else
         {
             // Choose a non-ghost cube
@@ -118,12 +114,10 @@ public class TrialManager : MonoBehaviour
             currentTargetCubeIndex = options[rng.Next(options.Count)];
         }
 
-        EventLogger_CSVWriter.Log($"Trial {currentTrial + 1} Begins");
-
-        // sets trial info
-        TrialStartTime = Time.time;
-
+        // When cube is highlighted, next trial begins
         HighlightCube(currentTargetCubeIndex);
+        EventLogger_CSVWriter.Log($"Trial {currentTrial + 1} Begins");
+        TrialStartTime = Time.time;
         currentTrial++;
     }
 
@@ -133,18 +127,16 @@ public class TrialManager : MonoBehaviour
         {
             Renderer rend = cubes[i].GetComponent<Renderer>();
 
-            if (i == index)
-            {
+            if (i == index) {
                 // This cube is the one to touch in this trial
                 rend.material.color = highlightColor;
             }
-            else if (i == ghostCubeIndex)
-            {
+            // this else if case can highlight the ghost cube a different color; is used for debugging
+            else if (i == ghostCubeIndex) {
                 // This cube is the ghost cube, but not the one being highlighted
                 rend.material.color = ghostColor;
             }
-            else
-            {
+            else {
                 // Normal cube
                 rend.material.color = defaultColor;
             }
@@ -153,7 +145,8 @@ public class TrialManager : MonoBehaviour
         Debug.LogWarning($"Trial {currentTrial + 1}/{totalTrials}: Highlighting cube {index}. Target Trial? {index == ghostCubeIndex}");
     }
 
-    // Called in CubeTrigger.cs in OnTriggerEnter function
+    // Clears the highlight from each cube and "rests" them
+    // Called in CubeTrigger.cs
     public void ClearCubeHighlight()
     {
         foreach (var cube in cubes)

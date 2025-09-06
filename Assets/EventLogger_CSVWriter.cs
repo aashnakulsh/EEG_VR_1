@@ -7,11 +7,6 @@ public class EventLogger_CSVWriter : MonoBehaviour
     private static string filePath;
     private static bool isInitialized = false;
 
-    // void Start()
-    // {
-    //     Init();
-    // }
-
     public static void Init()
     {
         if (isInitialized) return;
@@ -28,14 +23,14 @@ public class EventLogger_CSVWriter : MonoBehaviour
         }
 
         isInitialized = true;
-        Debug.LogWarning("✅ Event Logger initialized at: " + filePath);
+        Debug.LogWarning("Event Logger initialized at: " + filePath);
     }
 
     public static void Log(string eventDescription)
     {
         if (!isInitialized)
         {
-            Debug.LogError("❌ Event logger not initialized. Call Init() first.");
+            Debug.LogError("Event logger not initialized... Call Init() first");
             return;
         }
 
@@ -47,6 +42,6 @@ public class EventLogger_CSVWriter : MonoBehaviour
             writer.WriteLine($"{time},{eventDescription}");
         }
 
-        Debug.Log("📝 Logged event: " + eventDescription);
+        Debug.Log("Logged event: " + eventDescription);
     }
 }

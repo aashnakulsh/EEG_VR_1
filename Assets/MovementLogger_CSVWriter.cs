@@ -5,6 +5,7 @@ using System;
 
 public class MovementLogger_CSVWriter : MonoBehaviour
 {
+    // NOTE: is not static (like the other two logger files) because this works with a specific tracked GameObject
     [SerializeField] private GameObject trackedObject;
     [SerializeField] private float interval = 0.2f;
     private float timer = 0.0f;
@@ -49,7 +50,6 @@ public class MovementLogger_CSVWriter : MonoBehaviour
     {
         string[] row = new string[7];
         row[0] = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-        // row[0] = Time.time.ToString("F3");
         row[1] = obj.transform.position.x.ToString("F4");
         row[2] = obj.transform.position.y.ToString("F4");
         row[3] = obj.transform.position.z.ToString("F4");
