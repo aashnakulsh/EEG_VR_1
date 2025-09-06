@@ -371,7 +371,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9993ca3c7b9bf2a4584b79edb738c508, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  participantID: 1
 --- !u!4 &31800126
 Transform:
   m_ObjectHideFlags: 0
@@ -2064,7 +2063,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5848b308e48ad7a48afbba5840ffce45, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  originalColor: {r: 0.21176471, g: 0.26666668, b: 0.8196079, a: 0}
   planeTrigger: {fileID: 592522842}
   trialManager: {fileID: 1129724818}
   buic: {fileID: 332175038}
@@ -2911,7 +2909,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5848b308e48ad7a48afbba5840ffce45, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  originalColor: {r: 0.21176472, g: 0.26666668, b: 0.8196079, a: 1}
   planeTrigger: {fileID: 592522842}
   trialManager: {fileID: 1129724818}
   buic: {fileID: 332175038}
@@ -4773,7 +4770,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5848b308e48ad7a48afbba5840ffce45, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  originalColor: {r: 0.21176472, g: 0.26666668, b: 0.8196079, a: 0}
   planeTrigger: {fileID: 592522842}
   trialManager: {fileID: 1129724818}
   buic: {fileID: 332175038}
@@ -6553,7 +6549,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5848b308e48ad7a48afbba5840ffce45, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  originalColor: {r: 0.21176471, g: 0.26666668, b: 0.8196079, a: 0}
   planeTrigger: {fileID: 592522842}
   trialManager: {fileID: 1129724818}
   buic: {fileID: 332175038}
@@ -8369,19 +8364,21 @@ MonoBehaviour:
   highlightColor: {r: 0.9659009, g: 1, b: 0.18396229, a: 0}
   defaultColor: {r: 0.21176471, g: 0.26666668, b: 0.81960785, a: 0}
   ghostColor: {r: 0.21176472, g: 0.26666668, b: 0.8196079, a: 1}
-  onBreak: 0
   totalTrials: 100
   ghostUpdateInterval: 10
   targetTrialPercentage: 0.2
   isExperimentComplete: 0
+  onBreak: 0
   breakInterval: 25
   breakUI: {fileID: 332175038}
-  breakTime: 15
+  minimumBreakTime: 5
   tookBreak: 0
+  currentTrial: 0
   ghostCubeIndex: -1
-  trialLogger: {fileID: 31800125}
   score: 0
   totalPossibleScore: 0
+  currentTargetCubeIndex: 0
+  TrialStartTime: 0
 --- !u!4 &1129724819
 Transform:
   m_ObjectHideFlags: 0
@@ -9466,7 +9463,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5848b308e48ad7a48afbba5840ffce45, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  originalColor: {r: 0.21176472, g: 0.26666668, b: 0.8196079, a: 0}
   planeTrigger: {fileID: 592522842}
   trialManager: {fileID: 1129724818}
   buic: {fileID: 332175038}

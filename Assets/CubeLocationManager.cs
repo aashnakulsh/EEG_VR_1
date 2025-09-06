@@ -50,8 +50,8 @@ public class CubeLocationManager : MonoBehaviour
         // sets the position of each cube
         for (int i = 0; i < cubes.Length; i++)
         {
-            // NOTE: gets cube's angle degree in the arc... (added 10f so that the entire arc is shifted to the right) 
-            float angleDeg = (i * (90f / (cubes.Length - 1))) + 10f;
+            // NOTE: gets cube's angle degree in the arc... (subtracted 10f so that the entire arc is shifted to the right) 
+            float angleDeg = (i * (90f / (cubes.Length - 1))) - 10f;
             float angleRad = angleDeg * Mathf.Deg2Rad;
 
             // Horizontal arc 
