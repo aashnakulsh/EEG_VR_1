@@ -21,7 +21,8 @@ public class MovementLogger_CSVWriter : MonoBehaviour
             return;
         }
 
-        string folderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "CSV");
+        // string folderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "CSV");
+        string folderPath = @"C:\Users\aashn\Documents\CSV";
         Directory.CreateDirectory(folderPath);
 
         string timestamp = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");

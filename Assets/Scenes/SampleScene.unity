@@ -1501,6 +1501,7 @@ MonoBehaviour:
   - {fileID: 1423226060}
   - {fileID: 678471128}
   trialManager: {fileID: 1129724818}
+  cubeFlag: 0
   timeHitPlane: 0
 --- !u!135 &189075464
 SphereCollider:
@@ -3988,6 +3989,7 @@ MonoBehaviour:
   - {fileID: 1423226060}
   - {fileID: 678471128}
   trialManager: {fileID: 1129724818}
+  cubeFlag: 0
   timeHitPlane: 0
 --- !u!54 &592522843
 Rigidbody:
@@ -8364,19 +8366,19 @@ MonoBehaviour:
   highlightColor: {r: 0.9659009, g: 1, b: 0.18396229, a: 0}
   defaultColor: {r: 0.21176471, g: 0.26666668, b: 0.81960785, a: 0}
   ghostColor: {r: 0.21176472, g: 0.26666668, b: 0.8196079, a: 1}
-  totalTrials: 20
+  totalTrials: 1000
   ghostUpdateInterval: 10
   targetTrialPercentage: 0.2
   isExperimentComplete: 0
   onBreak: 0
-  breakInterval: 5
+  breakInterval: 100
   breakUI: {fileID: 332175038}
-  minimumBreakTime: 3
+  minimumBreakTime: 20
   tookBreak: 0
   currentTrial: 0
   ghostCubeIndex: -1
-  score: -25
-  totalPossibleScore: -25
+  score: -5
+  totalPossibleScore: -5
   currentTargetCubeIndex: 0
   TrialStartTime: 0
 --- !u!4 &1129724819
@@ -13666,7 +13668,7 @@ MonoBehaviour:
   plane: {fileID: 592522841}
   table: {fileID: 641606729}
   elbowPoint: {fileID: 1113587958}
-  tipToElbowLength: 0.483
+  tipToElbowLength: 0.46
   planeOffsetBelowTipToElbow: 0.03
 --- !u!4 &2088236477
 Transform:

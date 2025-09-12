@@ -6,6 +6,7 @@ public class PlaneTrigger : MonoBehaviour
 {
     public List<CubeTrigger> cubeTriggers;
     public TrialManager trialManager;
+    public int cubeFlag;
     private int planeFlag;
 
     public float timeHitPlane;
@@ -27,16 +28,22 @@ public class PlaneTrigger : MonoBehaviour
             timeHitPlane = Time.time;
 
             // Reset all cube triggers counters (cubes have a similar system to the planeFlag variable)
-            foreach (var cubeTrigger in cubeTriggers)
-            {
-                cubeTrigger.ResetCubeFlag();
-            }
+            // foreach (var cubeTrigger in cubeTriggers)
+            // {
+            //     cubeTrigger.ResetCubeFlag();
+            // }
+
+            //reset cube trigger flag
+            ResetCubeFlag();
 
             // Begins next trial
             StartCoroutine(trialManager.StartNextTrial());
         }
     }
-
+    public void ResetCubeFlag()
+    {
+        cubeFlag = 0;
+    }
     // called in CubeTrigger.cs to reset planeFlag (similar to how we reset cubeTrigger on line 27)
     public void ResetPlaneFlag()
     {

@@ -15,21 +15,21 @@ public class CubeTrigger : MonoBehaviour
     // so cubeFlag = 0 if participant has successful reset or -1 if participant has not reset)
     // currently, resetting is done by the participant triggering the plane
     // also prevents multilpe triggers of cube-related scripts (due to there being multiple colliderers on hand) 
-    private int cubeFlag;            
+    // private int cubeFlag;            
     private float timeHitCube;
     private AudioSource aud;
 
     void Start()
     {
         objectRenderer = GetComponent<Renderer>();
-        cubeFlag = 0;
+        planeTrigger.cubeFlag = 0;
         aud = GetComponent<AudioSource>();
     }
     private void OnTriggerEnter(Collider other)
     {
-        if (cubeFlag == 0 & !trialManager.onBreak & !trialManager.isExperimentComplete)
+        if (planeTrigger.cubeFlag == 0 & !trialManager.onBreak & !trialManager.isExperimentComplete)
         {
-            cubeFlag = -1;
+            planeTrigger.cubeFlag = -1;
             // Debugging code:
             // Debug.Log("OBJECT ENTERED");
             // sets cube to newColor when hand is in it -- used for debeugging
@@ -97,10 +97,5 @@ public class CubeTrigger : MonoBehaviour
         // Debug.Log("OBJECT EXITED");
         // objectRenderer.material.color = trialManager.defaultColor;
     // }
-
-    public void ResetCubeFlag()
-    {
-        cubeFlag = 0;
-    }
 
 }
