@@ -10,6 +10,7 @@ public class TrialLogger_CSVWriter : MonoBehaviour
     public static void Init()
     {
         // string folderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "CSV");
+        // This filepath is specific to my laptop; if using another computer then change filepath appropriately
         string folderPath = @"C:\Users\aashn\Documents\CSV";
         Directory.CreateDirectory(folderPath);
 
