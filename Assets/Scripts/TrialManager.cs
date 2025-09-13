@@ -28,8 +28,8 @@ public class TrialManager : MonoBehaviour
     // Statistics to Keep Track of
     public int currentTrial = 0;
     public int ghostCubeIndex = -1;
-    public int score = -25;
-    public int totalPossibleScore = -25;
+    public int score;
+    public int totalPossibleScore;
     public int currentTargetCubeIndex;
     public float TrialStartTime;
 
@@ -45,9 +45,17 @@ public class TrialManager : MonoBehaviour
         PickNewGhostCube(); 
     }
 
-    private void GenerateTargetTrials()
+    private void GenerateTrialArray()
     {
         int numTargetTrials = Mathf.RoundToInt(totalTrials * targetTrialPercentage);
+        int numNonTargetTrials = totalTrials - numTargetTrials;
+        
+        
+
+    }
+    private void GenerateTargetTrials()
+    {
+        // int numTargetTrials = Mathf.RoundToInt(totalTrials * targetTrialPercentage);
         HashSet<int> chosen = new HashSet<int>();
         while (chosen.Count < numTargetTrials)
         {
