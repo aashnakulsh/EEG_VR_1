@@ -9,14 +9,14 @@ public class CubeTrigger : MonoBehaviour
     public PlaneTrigger planeTrigger;
     public TrialManager trialManager;
     public BreakUIController buic;
-    public int cubeIndex;
+    public int cubeIdx;
 
     // used to determine whether or not to trigger cube-related scripts (cube can only be hit after "resetting", 
     // so cubeFlag = 0 if participant has successful reset or -1 if participant has not reset)
     // currently, resetting is done by the participant triggering the plane
     // also prevents multilpe triggers of cube-related scripts (due to there being multiple colliderers on hand) 
     // private int cubeFlag;            
-    private float timeHitCube;
+    public float timeHitCube;
     private AudioSource aud;
 
     void Start()
@@ -39,7 +39,7 @@ public class CubeTrigger : MonoBehaviour
 
             // getting statistics for logging
             timeHitCube = Time.time;
-            EventLogger_CSVWriter.Log($"Cube Touched: {cubeIndex}");  
+            EventLogger_CSVWriter.Log($"Cube Touched: {cubeIdx}");  
 
             planeTrigger.ResetPlaneFlag();               // Allow plane to be touched again by reseting plane trigger counter
             trialManager.ClearCubeHighlight();                    // Clears highlight
@@ -47,18 +47,18 @@ public class CubeTrigger : MonoBehaviour
             // getting statistics for logging
             float reactionTime = timeHitCube - planeTrigger.timeHitPlane;
             if (trialManager.tookBreak) {reactionTime = reactionTime-buic.totalBreakDuration;}
-            int touchedIndex = trialManager.cubes.IndexOf(this.gameObject);
+            int touchedIdx = trialManager.cubes.IndexOf(this.gameObject);
 
             if (trialManager.currentTrial != 0)
             {
                 // Logs trial
                 TrialLogger_CSVWriter.LogTrial(
                     trialManager.currentTrial,        // trial #
-                    trialManager.currentTargetCubeIndex == trialManager.ghostCubeIndex, //true if target trial (ie. target/highlighted cube = ghost cube)
-                    trialManager.ghostCubeIndex,            // ghost cube index
-                    touchedIndex,                           // index of cube that was hit
-                    trialManager.currentTargetCubeIndex,    // index of target cube/cube that should have been hit
-                    touchedIndex != trialManager.currentTargetCubeIndex,    // T if hit cube != target => there was a mismatch
+                    trialManager.currTargetCubeIdx == trialManager.ghostCubeIdx, //true if target trial (ie. target/highlighted cube = ghost cube)
+                    trialManager.ghostCubeIdx,            // ghost cube Idx
+                    touchedIdx,                           // Idx of cube that was hit
+                    trialManager.currTargetCubeIdx,    // Idx of target cube/cube that should have been hit
+                    touchedIdx != trialManager.currTargetCubeIdx,    // T if hit cube != target => there was a mismatch
                     reactionTime                            // time between user touching plane (activiating trial) and hitting cube (finishing trial)
                 );
             }
@@ -80,8 +80,6 @@ public class CubeTrigger : MonoBehaviour
             trialManager.totalPossibleScore += 5;
 
             planeTrigger.timeHitPlane = -1f;
-
-            
 
         }
     }

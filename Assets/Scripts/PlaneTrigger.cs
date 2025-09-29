@@ -6,9 +6,9 @@ public class PlaneTrigger : MonoBehaviour
 {
     public List<CubeTrigger> cubeTriggers;
     public TrialManager trialManager;
+    // public CubeTrigger cubeTrigger;
     public int cubeFlag;
     private int planeFlag;
-
     public float timeHitPlane;
 
     void Start()
@@ -18,7 +18,19 @@ public class PlaneTrigger : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (planeFlag == 0)
+        float currTime = Time.time;
+        float jitterTime = Random.Range(0.2f, 0.3f);
+
+        // Find the most recent cube hit
+        float latestCubeHitTime = 0f;
+        foreach (var cube in cubeTriggers)
+        {
+            if (cube.timeHitCube > latestCubeHitTime)
+                latestCubeHitTime = cube.timeHitCube;
+        }
+
+            // allow randomized jitter time to pass + ensure plane can be triggered
+        if ((currTime - latestCubeHitTime >= jitterTime) && (planeFlag == 0))
         {
             // sets planeFlag to -1 so that the Plane can't be triggered multiple times
             planeFlag = -1;
