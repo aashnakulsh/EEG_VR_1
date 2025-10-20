@@ -1978,6 +1978,7 @@ GameObject:
   m_Component:
   - component: {fileID: 315979909}
   - component: {fileID: 315979908}
+  - component: {fileID: 315979910}
   m_Layer: 0
   m_Name: WarmThemeManager
   m_TagString: Untagged
@@ -1997,12 +1998,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83aaf4b1128444947a5099752885a3b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cubeColor: {r: 0.4811321, g: 0.2879182, b: 0.097588114, a: 1}
-  cubeHighlightColor: {r: 0.9575472, g: 0.46488634, b: 0.10388485, a: 1}
-  tableCoolor: {r: 0.735849, g: 0.66884845, b: 0.5657707, a: 1}
-  uiColor: {r: 0.2735849, g: 0.09506644, b: 0.059362758, a: 1}
-  backgroundColor: {r: 1, g: 0.7882353, b: 0.44313726, a: 1}
-  lightColor: {r: 1, g: 1, b: 1, a: 1}
+  cubeColor:
+    r: 0.4811321
+    g: 0.2879182
+    b: 0.097588114
+    a: 1
+  cubeHighlightColor:
+    r: 0.9575472
+    g: 0.46488634
+    b: 0.10388485
+    a: 1
+  tableCoolor:
+    r: 0.735849
+    g: 0.66884845
+    b: 0.5657707
+    a: 1
+  uiColor:
+    r: 0.2735849
+    g: 0.09506644
+    b: 0.059362758
+    a: 1
+  backgroundColor:
+    r: 1
+    g: 0.7882353
+    b: 0.44313726
+    a: 1
+  lightColor:
+    r: 1
+    g: 1
+    b: 1
+    a: 1
   cubes:
   - {fileID: 329943859}
   - {fileID: 994084743}
@@ -2031,6 +2056,39 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1824265059}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &315979910
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 315979907}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e04ef17f67d3e0e49a02996a2d8f34ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cubeColor: {r: 0.43529415, g: 0.2901961, b: 0.13725491, a: 1}
+  cubeHighlightColor: {r: 0.86274517, g: 0.49411768, b: 0.21568629, a: 1}
+  elbowPointColor: {r: 0.7176471, g: 0.67058825, b: 0.5764706, a: 1}
+  tableColor: {r: 0.7176471, g: 0.67058825, b: 0.5764706, a: 1}
+  uiColor: {r: 0.24313727, g: 0.10588236, b: 0.07058824, a: 1}
+  backgroundColor: {r: 0.9490197, g: 0.79215693, b: 0.49803925, a: 1}
+  lightColor: {r: 1, g: 1, b: 1, a: 1}
+  cubes:
+  - {fileID: 329943859}
+  - {fileID: 994084743}
+  - {fileID: 413559214}
+  - {fileID: 1423226058}
+  - {fileID: 678471126}
+  table: {fileID: 641606729}
+  elbowPoint: {fileID: 1113587958}
+  textElements:
+  - {fileID: 2020874760}
+  - {fileID: 1491540093}
+  - {fileID: 1118080558}
+  - {fileID: 1669588191}
+  tm: {fileID: 1129724818}
 --- !u!1 &317430417
 GameObject:
   m_ObjectHideFlags: 0
@@ -4334,6 +4392,7 @@ GameObject:
   m_Component:
   - component: {fileID: 634567137}
   - component: {fileID: 634567136}
+  - component: {fileID: 634567138}
   m_Layer: 0
   m_Name: CoolThemeManager
   m_TagString: Untagged
@@ -4353,12 +4412,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83aaf4b1128444947a5099752885a3b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cubeColor: {r: 0.5529412, g: 0.6627451, b: 0.76862746, a: 1}
-  cubeHighlightColor: {r: 0, g: 0.07058824, b: 0.2, a: 1}
-  tableCoolor: {r: 0.2509804, g: 0.30588236, b: 0.4862745, a: 1}
-  uiColor: {r: 0, g: 0.09411765, b: 0.27058825, a: 1}
-  backgroundColor: {r: 0.49019608, g: 0.52156866, b: 0.5921569, a: 1}
-  lightColor: {r: 1, g: 1, b: 1, a: 1}
+  cubeColor:
+    r: 0.5529412
+    g: 0.6627451
+    b: 0.76862746
+    a: 1
+  cubeHighlightColor:
+    r: 0
+    g: 0.07058824
+    b: 0.2
+    a: 1
+  tableCoolor:
+    r: 0.2509804
+    g: 0.30588236
+    b: 0.4862745
+    a: 1
+  uiColor:
+    r: 0
+    g: 0.09411765
+    b: 0.27058825
+    a: 1
+  backgroundColor:
+    r: 0.49019608
+    g: 0.52156866
+    b: 0.5921569
+    a: 1
+  lightColor:
+    r: 1
+    g: 1
+    b: 1
+    a: 1
   cubes:
   - {fileID: 329943859}
   - {fileID: 994084743}
@@ -4387,6 +4470,39 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1824265059}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &634567138
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 634567135}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e04ef17f67d3e0e49a02996a2d8f34ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cubeColor: {r: 0.58431375, g: 0.6627451, b: 0.7568628, a: 1}
+  cubeHighlightColor: {r: 0.027450982, g: 0.07450981, b: 0.19215688, a: 1}
+  elbowPointColor: {r: 0.27058825, g: 0.30980393, b: 0.47450984, a: 1}
+  tableColor: {r: 0.27058825, g: 0.30980393, b: 0.47450984, a: 1}
+  uiColor: {r: 0.043137256, g: 0.098039225, b: 0.25882354, a: 1}
+  backgroundColor: {r: 0.49803925, g: 0.52156866, b: 0.58431375, a: 1}
+  lightColor: {r: 1, g: 1, b: 1, a: 1}
+  cubes:
+  - {fileID: 329943859}
+  - {fileID: 994084743}
+  - {fileID: 413559214}
+  - {fileID: 1423226058}
+  - {fileID: 678471126}
+  table: {fileID: 641606729}
+  elbowPoint: {fileID: 1113587958}
+  textElements:
+  - {fileID: 2020874760}
+  - {fileID: 1491540093}
+  - {fileID: 1118080558}
+  - {fileID: 1669588191}
+  tm: {fileID: 1129724818}
 --- !u!1 &641606729
 GameObject:
   m_ObjectHideFlags: 0
@@ -8487,6 +8603,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 007d112c2e6ee8a4c91f8925850f28d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  debugMode: 0
   cubes:
   - {fileID: 329943859}
   - {fileID: 994084743}

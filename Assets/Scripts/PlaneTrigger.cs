@@ -51,7 +51,7 @@ public class PlaneTrigger : MonoBehaviour
     {
         cubeFlag = 0;
     }
-    // called in CubeTrigger.cs to reset planeFlag (similar to how we reset cubeTrigger on line 27)
+    // called in CubeTrigger.cs to reset planeFlag (similar to how we reset cubeTrigger)
     public void ResetPlaneFlag()
     {
         planeFlag = 0;

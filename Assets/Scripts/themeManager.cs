@@ -3,12 +3,14 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class warmThemeManager : MonoBehaviour
+public class themeManager : MonoBehaviour
 {
     [Header("Theme Colors")]
     public Color cubeColor = Color.cyan;    // Cubes
     public Color cubeHighlightColor = Color.cyan;    // Cubes
-    public Color tableCoolor = Color.gray;  // Table / props
+
+    public Color elbowPointColor = Color.gray;
+    public Color tableColor = Color.gray;  // Table / props
     public Color uiColor = Color.magenta;  // UI & highlights
     public Color backgroundColor = Color.black; // Camera background
     public Color lightColor = Color.white;     // Directional light / ambient
@@ -16,6 +18,7 @@ public class warmThemeManager : MonoBehaviour
     [Header("References")]
     public List<GameObject> cubes = new List<GameObject>();
     public GameObject table;
+    public GameObject elbowPoint;
     public List<TextMeshProUGUI> textElements = new List<TextMeshProUGUI>();
     // public Light directionalLight;
 
@@ -55,7 +58,12 @@ public class warmThemeManager : MonoBehaviour
         {
             Renderer tableRend = table.GetComponent<Renderer>();
             if (tableRend != null)
-                tableRend.material.color = tableCoolor;
+                tableRend.material.color = tableColor;
+        }
+        if (elbowPoint != null)
+        {
+            Renderer elbowPointRend = elbowPoint.GetComponent<Renderer>();
+            if (elbowPointRend != null) elbowPointRend.material.color = elbowPointColor;
         }
 
         // 3. UI Text
