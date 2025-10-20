@@ -19,7 +19,7 @@ public class PlaneTrigger : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         float currTime = Time.time;
-        float jitterTime = Random.Range(0.2f, 0.3f);
+        float jitterTime = Random.Range(1f, 2f);
 
         // Find the most recent cube hit
         float latestCubeHitTime = 0f;
@@ -39,12 +39,7 @@ public class PlaneTrigger : MonoBehaviour
 
             timeHitPlane = Time.time;
 
-            // Reset all cube triggers counters (cubes have a similar system to the planeFlag variable)
-            // foreach (var cubeTrigger in cubeTriggers)
-            // {
-            //     cubeTrigger.ResetCubeFlag();
-            // }
-
+            // Allows cubes to be hit
             //reset cube trigger flag
             ResetCubeFlag();
 

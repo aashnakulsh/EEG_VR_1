@@ -2131,6 +2131,7 @@ MonoBehaviour:
   trialManager: {fileID: 1129724818}
   buic: {fileID: 332175038}
   cubeIdx: 0
+  timeHitCube: 0
 --- !u!65 &329943861
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2977,6 +2978,7 @@ MonoBehaviour:
   trialManager: {fileID: 1129724818}
   buic: {fileID: 332175038}
   cubeIdx: 0
+  timeHitCube: 0
 --- !u!65 &413559217
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4902,6 +4904,7 @@ MonoBehaviour:
   trialManager: {fileID: 1129724818}
   buic: {fileID: 332175038}
   cubeIdx: 0
+  timeHitCube: 0
 --- !u!65 &678471129
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -6681,6 +6684,7 @@ MonoBehaviour:
   trialManager: {fileID: 1129724818}
   buic: {fileID: 332175038}
   cubeIdx: 0
+  timeHitCube: 0
 --- !u!65 &994084746
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -8496,7 +8500,7 @@ MonoBehaviour:
   minTargetGap: 2
   maxTargetGap: 6
   n: 3
-  totalTrials: 100
+  totalTrials: 1000
   targetTrialPercentage: 0.2
   isExperimentComplete: 0
   onBreak: 0
@@ -8510,6 +8514,10 @@ MonoBehaviour:
   totalPossibleScore: -5
   currTargetCubeIdx: 0
   TrialStartTime: 0
+  pythonPath: python
+  scriptPath: Scripts/trial_generator_ortools.py
+  maxTimeSeconds: 300
+  generatedTrials: []
 --- !u!4 &1129724819
 Transform:
   m_ObjectHideFlags: 0
@@ -9598,6 +9606,7 @@ MonoBehaviour:
   trialManager: {fileID: 1129724818}
   buic: {fileID: 332175038}
   cubeIdx: 0
+  timeHitCube: 0
 --- !u!65 &1423226061
 BoxCollider:
   m_ObjectHideFlags: 0
