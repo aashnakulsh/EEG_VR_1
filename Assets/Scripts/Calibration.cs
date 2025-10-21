@@ -1,235 +1,190 @@
 using UnityEngine;
+using Unity.Mathematics; // float3x3, math.mul, math.inverse
 using UnityEngine.InputSystem;
+using TMPro;
 
-/// <summary>
-/// Two-point table calibration using Meta AIO (or any XR) controller poses + Input System.
-/// - Left trigger captures the REAL top-right corner (with inset compensation).
-/// - Right trigger captures the REAL top-left corner (with inset compensation).
-/// - When both are captured, call CalibrateNow_TwoPoint() (auto or manual).
+/// Matrix-based 3‑point calibration.
 ///
-/// Results:
-///   * Applies YAW (around +Y) + XZ translation ONLY. Height (Y) is unchanged.
-///   * Moves tableRoot; everything under it (props, canvases) follows.
-/// </summary>
+/// Workflow:
+/// 1) Press trigger on three corresponding real corners (in the SAME order as vPoints[0..2]).
+/// 2) On the 3rd press, we build 3×3 matrices for virtual (v) and real (r) points in XZ, solve
+///    rotationMatrix = r * inverse(v), then apply to the virtualSpace (position + yaw via LookAt anchor).
+/// 3) Optionally show prompts via displayText.
+///
+/// Notes:
+/// - Assumes virtualSpace is authored around the origin and contains your virtual table.
+/// - Only XZ is calibrated (Y is kept as-is). We write Y = yKeep for both virtualSpace and anchor.
+/// - If your virtualSpace has a rotated/scaled parent, keep it uniform scale; LookAt handles yaw.
 public class Calibration : MonoBehaviour
 {
-    [Header("Scene References")]
-    [Tooltip("Parent of the entire table (mesh, props, canvases, etc.). Everything must be a child of this.")]
-    public Transform tableRoot;
+    [Header("Scene Objects (match FullDemo1)")]
+    [Tooltip("Virtual anchor points on the table (order must match the order you will touch in real world).")]
+    public GameObject[] vPoints = new GameObject[3];
 
-    [Tooltip("Virtual table's Top-Right corner marker (child of tableRoot).")]
-    public Transform topRightAnchor;
+    [Tooltip("Real-world capture placeholders (we'll fill their positions when you press trigger).")]
+    public GameObject[] rPoints = new GameObject[3];
 
-    [Tooltip("Virtual table's Top-Left corner marker (child of tableRoot).")]
-    public Transform topLeftAnchor;
+    [Tooltip("Object that holds all virtual table content (equiv. to virtualSpace). Move/rotate this.")]
+    public GameObject virtualSpace;
 
-    [Tooltip("Left controller Transform (world pose) from Meta AIO / OpenXR.")]
-    public Transform leftController;
+    [Tooltip("An object initially placed at (0,0,+z) from virtualSpace to define its forward axis.")]
+    public GameObject anchor;
 
-    [Tooltip("Right controller Transform (world pose) from Meta AIO / OpenXR.")]
-    public Transform rightController;
+    [Header("Input")]
+    [Tooltip("Left/Right controller transform used to capture the sample when you press trigger.")]
+    public Transform controller;
 
-    [Header("Input (New Input System)")]
-    [Tooltip("Assign action bound to <XRController>{LeftHand}/trigger")]
-    public InputActionReference leftTrigger;
+    [Tooltip("Bind to <XRController>/trigger if you want auto-capture; otherwise call StateTrigger().")]
+    public InputActionReference triggerAction;
 
-    [Tooltip("Assign action bound to <XRController>{RightHand}/trigger")]
-    public InputActionReference rightTrigger;
+    [Header("UI (optional)")]
+    public TMP_Text displayText;
 
-    [Header("Capture / Calibration Options")]
-    [Tooltip("Meters to inset from each touched corner toward the table's interior (compensate controller tip size).")]
-    [Min(0f)] public float edgeInsetMeters = 0.03f;
-
-    [Tooltip("If true, will automatically run calibration as soon as both corners are captured.")]
-    public bool autoCalibrateWhenBothCaptured = true;
-
-    [Tooltip("Optional: Log extra details.")]
+    [Header("Debug")]
     public bool verboseLogs = true;
 
-    // ---- internal capture state ----
-    private bool topRightCaptured = false;
-    private bool topLeftCaptured  = false;
-    private Vector3 realTopRightWorld; // measured with inset applied
-    private Vector3 realTopLeftWorld;  // measured with inset applied
+    private int state = 0;      // 0..3 then done
+    private int totalStates = 0; // 1 + vPoints.Length (parity w/ FullDemo1)
 
     private void OnEnable()
     {
-        // Enable actions & hook callbacks
-        if (leftTrigger != null && leftTrigger.action != null)
+        totalStates = 1 + (vPoints != null ? vPoints.Length : 0);
+        if (displayText) displayText.text = $"Calibrating (1/{(vPoints?.Length ?? 3)})";
+        if (triggerAction?.action != null)
         {
-            leftTrigger.action.Enable();
-            leftTrigger.action.performed += OnLeftTriggerPressed;
-        }
-        if (rightTrigger != null && rightTrigger.action != null)
-        {
-            rightTrigger.action.Enable();
-            rightTrigger.action.performed += OnRightTriggerPressed;
+            triggerAction.action.Enable();
+            triggerAction.action.performed += OnTrigger;
         }
     }
 
     private void OnDisable()
     {
-        // Unhook callbacks & disable actions
-        if (leftTrigger != null && leftTrigger.action != null)
+        if (triggerAction?.action != null)
         {
-            leftTrigger.action.performed -= OnLeftTriggerPressed;
-            leftTrigger.action.Disable();
-        }
-        if (rightTrigger != null && rightTrigger.action != null)
-        {
-            rightTrigger.action.performed -= OnRightTriggerPressed;
-            rightTrigger.action.Disable();
+            triggerAction.action.performed -= OnTrigger;
+            triggerAction.action.Disable();
         }
     }
 
-    // --------- INPUT CALLBACKS ---------
-    private void OnLeftTriggerPressed(InputAction.CallbackContext ctx)
+    private void OnTrigger(InputAction.CallbackContext _)
     {
-        // Left trigger → capture REAL Top-Right corner (as requested earlier).
-        // (If you want the opposite mapping, swap the two bodies of OnLeftTriggerPressed & OnRightTriggerPressed.)
-        CaptureCornerTopRight();
-        MaybeAutoCalibrate();
+        StateTrigger();
     }
 
-    private void OnRightTriggerPressed(InputAction.CallbackContext ctx)
+    /// Call this from UI or input. Mirrors FullDemo1.StateTrigger.
+    public void StateTrigger()
     {
-        // Right trigger → capture REAL Top-Left corner.
-        CaptureCornerTopLeft();
-        MaybeAutoCalibrate();
-    }
+        if (!CheckBasics()) return;
 
-    private void MaybeAutoCalibrate()
-    {
-        if (autoCalibrateWhenBothCaptured && topRightCaptured && topLeftCaptured)
+        if (state < totalStates - 2)
         {
-            CalibrateNow_TwoPoint();
+            // Capture a real point into rPoints[state]
+            rPoints[state].transform.position = controller.position;
+            state++;
+            if (displayText) displayText.text = $"Calibrating ({state + 1}/{rPoints.Length})";
+        }
+        else if (state == totalStates - 2)
+        {
+            // Final capture, then calibrate
+            rPoints[state].transform.position = controller.position;
+            Calibrate();
+            state++;
+            if (displayText) displayText.text = "Finished! Press Trigger to Begin!";
+        }
+        else
+        {
+            // After calibration, you can toggle a start animation, etc. (optional)
         }
     }
 
-    // --------- CAPTURE METHODS ---------
-    public void CaptureCornerTopRight()
+    /// Core: identical math style to FullDemo1.Calibrate()
+    public void Calibrate()
     {
-        if (!CheckRefs(leftController, "LeftController")) return;
-        if (!CheckRefs(tableRoot, "TableRoot")) return;
+        // Build rMatrix and vMatrix as 3×3 homogeneous (x,z,1) columns (matching your colleague).
+        // Important: We treat each column as one point (c0, c1, c2) consistent with Unity.Mathematics float3x3 layout.
+        float3x3 rMatrix = new float3x3();
+        float3x3 vMatrix = new float3x3();
 
-        // Inward direction from Top-Right is toward ( -tableRight + -tableForward )
-        Vector3 insetDir = (-tableRoot.right + -tableRoot.forward).normalized;
-        realTopRightWorld = leftController.position + insetDir * edgeInsetMeters;
-        topRightCaptured = true;
+        // sMatrix stores two columns: virtualSpace position and anchor position (both projected to XZ, with 1 in w).
+        float3x3 sMatrix = new float3x3();
+
+        // Fill rMatrix & vMatrix
+        for (int i = 0; i < 3; i++)
+        {
+            Vector3 rp = rPoints[i].transform.position;
+            Vector3 vp = vPoints[i].transform.position;
+
+            // Column i (x, z, 1)
+            if (i == 0)
+            {
+                rMatrix.c0 = new float3(rp.x, rp.z, 1f);
+                vMatrix.c0 = new float3(vp.x, vp.z, 1f);
+            }
+            else if (i == 1)
+            {
+                rMatrix.c1 = new float3(rp.x, rp.z, 1f);
+                vMatrix.c1 = new float3(vp.x, vp.z, 1f);
+            }
+            else // i == 2
+            {
+                rMatrix.c2 = new float3(rp.x, rp.z, 1f);
+                vMatrix.c2 = new float3(vp.x, vp.z, 1f);
+            }
+        }
+
+        // Solve affine (really similarity-with-yaw) in XZ: rotationMatrix = r * inverse(v)
+        float3x3 rotationMatrix = math.mul(rMatrix, math.inverse(vMatrix));
+        if (verboseLogs) Debug.Log($"[Calib] rotationMatrix =\n{rotationMatrix}");
+
+        // Transform the virtual points (for optional debug visualization)
+        float3x3 transformedPoints = math.mul(rotationMatrix, vMatrix);
+        if (verboseLogs)
+        {
+            Debug.Log($"[Calib] v0'={transformedPoints.c0.x:0.###},{transformedPoints.c0.y:0.###}  v1'={transformedPoints.c1.x:0.###},{transformedPoints.c1.y:0.###}  v2'={transformedPoints.c2.x:0.###},{transformedPoints.c2.y:0.###}");
+        }
+
+        // Optionally write them back (comment out in production)
+        // vPoints[0].transform.position = new Vector3(transformedPoints.c0.x, vPoints[0].transform.position.y, transformedPoints.c0.y);
+        // vPoints[1].transform.position = new Vector3(transformedPoints.c1.x, vPoints[1].transform.position.y, transformedPoints.c1.y);
+        // vPoints[2].transform.position = new Vector3(transformedPoints.c2.x, vPoints[2].transform.position.y, transformedPoints.c2.y);
+
+        // sMatrix: column 0 is virtualSpace position, column 1 is anchor position (both in XZ plane, 1 in w)
+        Vector3 vsPos = virtualSpace.transform.position;
+        Vector3 anPos = anchor.transform.position;
+
+        sMatrix.c0 = new float3(vsPos.x, vsPos.z, 1f);
+        sMatrix.c1 = new float3(anPos.x, anPos.z, 1f);
+        sMatrix.c2 = new float3(0f, 0f, 1f); // unused but keep homogeneous structure
+
+        float3x3 virtualSpaceTransformed = math.mul(rotationMatrix, sMatrix);
+        if (verboseLogs) Debug.Log($"[Calib] virtualSpaceTransformed =\n{virtualSpaceTransformed}");
+
+        // Apply: set virtualSpace to transformed col0 (XZ), set anchor to transformed col1 (XZ), then LookAt.
+        // Preserve existing Y heights (you can change yKeep to the averaged real Y if preferred).
+        float yKeepVS = virtualSpace.transform.position.y;
+        float yKeepAN = anchor.transform.position.y;
+
+        Vector3 newVS = new Vector3(virtualSpaceTransformed.c0.x, yKeepVS, virtualSpaceTransformed.c0.y);
+        Vector3 newAN = new Vector3(virtualSpaceTransformed.c1.x, yKeepAN, virtualSpaceTransformed.c1.y);
+
+        virtualSpace.transform.position = newVS;
+        anchor.transform.position = newAN;
+        virtualSpace.transform.LookAt(anchor.transform.position);
 
         if (verboseLogs)
-            Debug.Log($"[Calib] Captured REAL TopRight at {leftController.position:F3} → inset → {realTopRightWorld:F3} (inset {edgeInsetMeters}m dir {insetDir})");
-    }
-
-    public void CaptureCornerTopLeft()
-    {
-        if (!CheckRefs(rightController, "RightController")) return;
-        if (!CheckRefs(tableRoot, "TableRoot")) return;
-
-        // Inward direction from Top-Left is toward ( +tableRight + -tableForward )
-        Vector3 insetDir = (tableRoot.right + -tableRoot.forward).normalized;
-        realTopLeftWorld = rightController.position + insetDir * edgeInsetMeters;
-        topLeftCaptured = true;
-
-        if (verboseLogs)
-            Debug.Log($"[Calib] Captured REAL TopLeft at {rightController.position:F3} → inset → {realTopLeftWorld:F3} (inset {edgeInsetMeters}m dir {insetDir})");
-    }
-
-    // --------- CALIBRATION (2-POINT, XZ ONLY) ---------
-    /// <summary>
-    /// Aligns the virtual table using two points: TopRight & TopLeft.
-    /// Applies yaw (around +Y) and XZ translation ONLY (Y height preserved).
-    /// </summary>
-    public void CalibrateNow_TwoPoint()
-    {
-        if (!CheckRefs(tableRoot, "TableRoot") ||
-            !CheckRefs(topRightAnchor, "TopRightAnchor") ||
-            !CheckRefs(topLeftAnchor, "TopLeftAnchor"))
         {
-            return;
+            Debug.Log($"[Calib] Applied. VS pos -> {newVS}  Anchor -> {newAN}  VS yaw -> {virtualSpace.transform.eulerAngles.y:0.##}°");
         }
-        if (!topRightCaptured || !topLeftCaptured)
-        {
-            Debug.LogWarning("[Calib] Need both TopRight and TopLeft captures before two-point calibration.");
-            return;
-        }
-
-        // Virtual anchors in world
-        Vector3 vTR = topRightAnchor.position;
-        Vector3 vTL = topLeftAnchor.position;
-
-        // Real (sampled) anchors in world (already inset)
-        Vector3 rTR = realTopRightWorld;
-        Vector3 rTL = realTopLeftWorld;
-
-        // 2D vectors on XZ plane
-        Vector2 vVec = ToXZ(vTL - vTR);
-        Vector2 rVec = ToXZ(rTL - rTR);
-
-        if (vVec.sqrMagnitude < 1e-8f || rVec.sqrMagnitude < 1e-8f)
-        {
-            Debug.LogError("[Calib] Degenerate anchor vectors; are your anchors too close or identical?");
-            return;
-        }
-
-        // Compute yaw: rotate vVec onto rVec (signed angle in XZ)
-        float yawDeg = SignedAngleDeg(vVec, rVec);
-        Quaternion deltaYaw = Quaternion.AngleAxis(yawDeg, Vector3.up);
-
-        // Apply rotation first (around tableRoot pivot)
-        Quaternion newRootRot = deltaYaw * tableRoot.rotation;
-
-        // Where will the virtual TopRight land after rotation (no translation yet)?
-        Vector3 trAfterRot = RotateAroundPivot(vTR, tableRoot.position, deltaYaw);
-
-        // Compute XZ-only translation to put TopRight exactly at the real TopRight
-        Vector2 diffXZ = ToXZ(rTR - trAfterRot);
-        Vector3 deltaPos = new Vector3(diffXZ.x, 0f, diffXZ.y); // lock Y to 0 shift
-
-        // Commit transform — height preserved
-        tableRoot.rotation = newRootRot;
-        tableRoot.position = new Vector3(
-            tableRoot.position.x + deltaPos.x,
-            tableRoot.position.y, // unchanged
-            tableRoot.position.z + deltaPos.z
-        );
-
-        if (verboseLogs)
-            Debug.Log($"[Calib] Applied Two-Point XZ calibration. Yaw={yawDeg:F2}°, ΔposXZ=({deltaPos.x:F3},{deltaPos.z:F3}). Height preserved.");
-
-        // Ready for next round if desired
-        // ResetCaptures(); // uncomment if you want to force new captures every time
     }
 
-    public void ResetCaptures()
+    private bool CheckBasics()
     {
-        topRightCaptured = false;
-        topLeftCaptured = false;
-    }
-
-    // --------- HELPERS ---------
-    private static Vector2 ToXZ(in Vector3 v) => new Vector2(v.x, v.z);
-
-    private static float SignedAngleDeg(Vector2 from, Vector2 to)
-    {
-        from.Normalize(); to.Normalize();
-        float unsigned = Vector2.Angle(from, to);
-        float sign = Mathf.Sign(from.x * to.y - from.y * to.x); // z-sign of 2D cross
-        return unsigned * sign;
-    }
-
-    private static Vector3 RotateAroundPivot(Vector3 point, Vector3 pivot, Quaternion rot)
-    {
-        return pivot + rot * (point - pivot);
-    }
-
-    private static bool CheckRefs(Object obj, string label)
-    {
-        if (obj == null)
-        {
-            Debug.LogError($"[Calib] Missing reference: {label}");
-            return false;
-        }
+        if (vPoints == null || vPoints.Length < 3 || vPoints[0] == null || vPoints[1] == null || vPoints[2] == null)
+        { Debug.LogError("[Calib] Assign vPoints[0..2]."); return false; }
+        if (rPoints == null || rPoints.Length < 3 || rPoints[0] == null || rPoints[1] == null || rPoints[2] == null)
+        { Debug.LogError("[Calib] Assign rPoints[0..2]."); return false; }
+        if (virtualSpace == null || anchor == null) { Debug.LogError("[Calib] Assign virtualSpace and anchor."); return false; }
+        if (controller == null) { Debug.LogError("[Calib] Assign controller Transform."); return false; }
         return true;
     }
 }

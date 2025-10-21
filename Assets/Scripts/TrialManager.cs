@@ -76,8 +76,13 @@ public class TrialManager : MonoBehaviour
         Debug.Log($"Trials: {totalTrials}, Targets: {Mathf.RoundToInt(totalTrials * targetTrialPercentage)}, " +
         $"minGap: {minTargetGap}, maxGap: {maxTargetGap}, n: {n}, noGhostStart: {noGhostStartTrials}");
 
-        LoadTrialsFromPython();
-        trialSequence = generatedTrials.Select(t => (t.cubeIndex, t.isTarget)).ToList();
+        // commented out for debugging:
+        // LoadTrialsFromPython();
+        // trialSequence = generatedTrials.Select(t => (t.cubeIndex, t.isTarget)).ToList();
+
+        // commenet out when NOT debugging:
+        trialSequence = GenerateTrialsDummy();
+        
         TrialSeqValidator.Validate(trialSequence, this);
         TrialSeqValidator.printTrialSeq(trialSequence);
     }

@@ -7,6 +7,7 @@ public class PlaneTrigger : MonoBehaviour
     public List<CubeTrigger> cubeTriggers;
     public TrialManager trialManager;
     // public CubeTrigger cubeTrigger;
+    // public Calibration calibration;
     public int cubeFlag;
     private int planeFlag;
     public float timeHitPlane;
