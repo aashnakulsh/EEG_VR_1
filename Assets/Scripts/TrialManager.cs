@@ -10,6 +10,7 @@ using Debug = UnityEngine.Debug;
 public class TrialManager : MonoBehaviour
 {
     public bool debugMode = false;
+    public bool useDummyTrialGen = false;
     //Cube info
     public List<GameObject> cubes;
     public Color highlightColor;
@@ -67,6 +68,16 @@ public class TrialManager : MonoBehaviour
     public string scriptPath = "Scripts/trial_generator_ortools.py";
     public int maxTimeSeconds = 300;
     public List<Trial> generatedTrials = new List<Trial>();
+    private struct GhostMoveAlert
+    {
+        public bool hasMove;
+        public int upcomingCube;
+        public int nextTargetIndex;
+        public int trialsUntilMove;
+        public int earliestStartTrial;
+        public int trialsUntilEarliestStart;
+    }
+
         
     private void Start()
     {
@@ -76,12 +87,18 @@ public class TrialManager : MonoBehaviour
         Debug.Log($"Trials: {totalTrials}, Targets: {Mathf.RoundToInt(totalTrials * targetTrialPercentage)}, " +
         $"minGap: {minTargetGap}, maxGap: {maxTargetGap}, n: {n}, noGhostStart: {noGhostStartTrials}");
 
-        // commented out for debugging:
-        // LoadTrialsFromPython();
-        // trialSequence = generatedTrials.Select(t => (t.cubeIndex, t.isTarget)).ToList();
+        if (!useDummyTrialGen)
+        {
+            // real code:
+            LoadTrialsFromPython();
+            trialSequence = generatedTrials.Select(t => (t.cubeIndex, t.isTarget)).ToList();
+        }
+        else
+        {
+            // for debugging:
+            trialSequence = GenerateTrialsDummy();
 
-        // commenet out when NOT debugging:
-        trialSequence = GenerateTrialsDummy();
+        }
         
         TrialSeqValidator.Validate(trialSequence, this);
         TrialSeqValidator.printTrialSeq(trialSequence);
@@ -214,26 +231,31 @@ public class TrialManager : MonoBehaviour
         var (nextCubeIdx, isTargetTrial) = trialSequence[currentTrial];
         currTargetCubeIdx = nextCubeIdx;
 
-        var nextCubeIdxN = -1;
-        var isTargetTrialN = false;
+        // var nextCubeIdxN = -1;
+        // var isTargetTrialN = false;
 
         // check within the next n trials, if a cube is ghost -> debug.log which index + in how many trials (trials first then index)
-        if ((currentTrial + n) < totalTrials)
-        {
-            (nextCubeIdxN, isTargetTrialN) = trialSequence[currentTrial + n];
-        }
-        else
-        {
-            (nextCubeIdxN, isTargetTrialN) = (-1, false);
-        }
+        // if ((currentTrial + n) < totalTrials)
+        // {
+        //     (nextCubeIdxN, isTargetTrialN) = trialSequence[currentTrial + n];
+        // }
+        // else
+        // {
+        //     (nextCubeIdxN, isTargetTrialN) = (-1, false);
+        // }
 
         if (isTargetTrial)
         {
             ghostCubeIdx = currTargetCubeIdx;
             EventLogger_CSVWriter.Log($"Ghost Cube to index: {ghostCubeIdx}");
+            Debug.LogError("\n==================== TARGET ====================\n");
         }
 
-        if (isTargetTrialN) Debug.LogError($"🔄🔄🔄 Switch ghost cube to INDEX {nextCubeIdxN} in {n} trials!");
+        // if (isTargetTrial) Debug.Log("\n==================== TARGET ====================\n");
+
+        LogNextGhostMoveAlert(n);
+
+        // if (isTargetTrialN) Debug.LogError($"🔄🔄🔄 Switch ghost cube to INDEX {nextCubeIdxN} in {n} trials!");
 
         // When cube is highlighted, next trial begins
         HighlightCube(currTargetCubeIdx);
@@ -299,185 +321,185 @@ public class TrialManager : MonoBehaviour
     }
 
 
-// private List<(int cubeIdx, bool isTarget)> GenerateTrials()
-// {
-//     UnityEngine.Random.InitState(System.Environment.TickCount);
+    // private List<(int cubeIdx, bool isTarget)> GenerateTrials()
+    // {
+    //     UnityEngine.Random.InitState(System.Environment.TickCount);
 
-//     int numCubes = cubes.Count;
-//     int T = totalTrials;
-//     int K = Mathf.RoundToInt(T * targetTrialPercentage); // # targets
-//     int NT = T - K;
+    //     int numCubes = cubes.Count;
+    //     int T = totalTrials;
+    //     int K = Mathf.RoundToInt(T * targetTrialPercentage); // # targets
+    //     int NT = T - K;
 
-//     if (numCubes <= 0 || T <= 0)
-//     {
-//         Debug.LogError("GenerateTrials: invalid configuration");
-//         return new List<(int, bool)>();
-//     }
+    //     if (numCubes <= 0 || T <= 0)
+    //     {
+    //         Debug.LogError("GenerateTrials: invalid configuration");
+    //         return new List<(int, bool)>();
+    //     }
 
-//     // quotas per cube (balanced ±1)
-//     int[] targetQuota = Enumerable.Repeat(K / numCubes, numCubes).ToArray();
-//     int[] nonTargetQuota = Enumerable.Repeat(NT / numCubes, numCubes).ToArray();
-//     for (int i = 0; i < K % numCubes; i++) targetQuota[i]++;
-//     for (int i = 0; i < NT % numCubes; i++) nonTargetQuota[i]++;
+    //     // quotas per cube (balanced ±1)
+    //     int[] targetQuota = Enumerable.Repeat(K / numCubes, numCubes).ToArray();
+    //     int[] nonTargetQuota = Enumerable.Repeat(NT / numCubes, numCubes).ToArray();
+    //     for (int i = 0; i < K % numCubes; i++) targetQuota[i]++;
+    //     for (int i = 0; i < NT % numCubes; i++) nonTargetQuota[i]++;
 
-//     var seq = new (int cubeIdx, bool isTarget)[T];
+    //     var seq = new (int cubeIdx, bool isTarget)[T];
 
-//     // state trackers
-//     int[] lastHighlight = Enumerable.Repeat(-9999, numCubes).ToArray();
-//     int[] blockedUntil = Enumerable.Repeat(-9999, numCubes).ToArray();
+    //     // state trackers
+    //     int[] lastHighlight = Enumerable.Repeat(-9999, numCubes).ToArray();
+    //     int[] blockedUntil = Enumerable.Repeat(-9999, numCubes).ToArray();
 
-//     System.Random rnd = new System.Random();
+    //     System.Random rnd = new System.Random();
 
-//     bool Backtrack(
-//         int t,
-//         int targetsLeft,
-//         int nonTargetsLeft,
-//         int lastTargetTrial,
-//         int consecutiveTargets,
-//         int prevGhostCube,
-//         int? lastTargetCube,
-//         int sameCubeTargetRun)
-//     {
-//         if (t == T)
-//         {
-//             return targetsLeft == 0 && nonTargetsLeft == 0;
-//         }
+    //     bool Backtrack(
+    //         int t,
+    //         int targetsLeft,
+    //         int nonTargetsLeft,
+    //         int lastTargetTrial,
+    //         int consecutiveTargets,
+    //         int prevGhostCube,
+    //         int? lastTargetCube,
+    //         int sameCubeTargetRun)
+    //     {
+    //         if (t == T)
+    //         {
+    //             return targetsLeft == 0 && nonTargetsLeft == 0;
+    //         }
 
-//         // no targets allowed in first noGhostStartTrials
-//         bool canBeTargetHere = (t >= noGhostStartTrials) && (targetsLeft > 0);
+    //         // no targets allowed in first noGhostStartTrials
+    //         bool canBeTargetHere = (t >= noGhostStartTrials) && (targetsLeft > 0);
 
-//         // enforce spacing between targets
-//         if (lastTargetTrial >= 0)
-//         {
-//             int gap = t - lastTargetTrial;
-//             if (gap < minTargetGap) canBeTargetHere = false;
-//             if (gap > maxTargetGap && targetsLeft > 0) return false; // must place target earlier
-//         }
+    //         // enforce spacing between targets
+    //         if (lastTargetTrial >= 0)
+    //         {
+    //             int gap = t - lastTargetTrial;
+    //             if (gap < minTargetGap) canBeTargetHere = false;
+    //             if (gap > maxTargetGap && targetsLeft > 0) return false; // must place target earlier
+    //         }
 
-//         // must place target if not enough slots left
-//         if (targetsLeft > (T - t)) canBeTargetHere = false;
+    //         // must place target if not enough slots left
+    //         if (targetsLeft > (T - t)) canBeTargetHere = false;
 
-//         // order of trying: randomized
-//         var choices = new List<bool>();
-//         if (canBeTargetHere) choices.Add(true);
-//         if (nonTargetsLeft > 0) choices.Add(false);
-//         choices = choices.OrderBy(_ => rnd.Next()).ToList();
+    //         // order of trying: randomized
+    //         var choices = new List<bool>();
+    //         if (canBeTargetHere) choices.Add(true);
+    //         if (nonTargetsLeft > 0) choices.Add(false);
+    //         choices = choices.OrderBy(_ => rnd.Next()).ToList();
 
-//         foreach (var isTarget in choices)
-//         {
-//             // reject >2 consecutive targets (any cube)
-//             if (isTarget && consecutiveTargets >= 2) continue;
+    //         foreach (var isTarget in choices)
+    //         {
+    //             // reject >2 consecutive targets (any cube)
+    //             if (isTarget && consecutiveTargets >= 2) continue;
 
-//             // candidate cubes
-//             var candidates = new List<int>();
-//             for (int c = 0; c < numCubes; c++)
-//             {
-//                 // always enforce block window
-//                 if (t < blockedUntil[c]) continue;
+    //             // candidate cubes
+    //             var candidates = new List<int>();
+    //             for (int c = 0; c < numCubes; c++)
+    //             {
+    //                 // always enforce block window
+    //                 if (t < blockedUntil[c]) continue;
 
-//                 if (isTarget)
-//                 {
-//                     if (targetQuota[c] <= 0) continue;
+    //                 if (isTarget)
+    //                 {
+    //                     if (targetQuota[c] <= 0) continue;
 
-//                     // must not have been highlighted in last n trials
-//                     if (lastHighlight[c] >= t - n) continue;
+    //                     // must not have been highlighted in last n trials
+    //                     if (lastHighlight[c] >= t - n) continue;
 
-//                     // --- Check previous ghost cube rule ---
-//                     if (prevGhostCube != -1)
-//                     {
-//                         for (int j = Mathf.Max(0, t - n); j < t; j++)
-//                         {
-//                             if (seq[j].cubeIdx == prevGhostCube)
-//                                 goto skipCandidate; // fails rule
-//                         }
-//                     }
-//                 }
-//                 else
-//                 {
-//                     if (nonTargetQuota[c] <= 0) continue;
-//                 }
+    //                     // --- Check previous ghost cube rule ---
+    //                     if (prevGhostCube != -1)
+    //                     {
+    //                         for (int j = Mathf.Max(0, t - n); j < t; j++)
+    //                         {
+    //                             if (seq[j].cubeIdx == prevGhostCube)
+    //                                 goto skipCandidate; // fails rule
+    //                         }
+    //                     }
+    //                 }
+    //                 else
+    //                 {
+    //                     if (nonTargetQuota[c] <= 0) continue;
+    //                 }
 
-//                 candidates.Add(c);
-//             skipCandidate:;
-//             }
+    //                 candidates.Add(c);
+    //             skipCandidate:;
+    //             }
 
-//             candidates = candidates.OrderBy(_ => rnd.Next()).ToList();
-//             foreach (int c in candidates)
-//             {
-//                 // compute new run count for same cube target rule
-//                 int newSameCubeRun = sameCubeTargetRun;
-//                 int? newLastTargetCube = lastTargetCube;
-//                 if (isTarget)
-//                 {
-//                     if (lastTargetCube.HasValue && lastTargetCube.Value == c)
-//                         newSameCubeRun++;
-//                     else
-//                     {
-//                         newSameCubeRun = 1;
-//                         newLastTargetCube = c;
-//                     }
+    //             candidates = candidates.OrderBy(_ => rnd.Next()).ToList();
+    //             foreach (int c in candidates)
+    //             {
+    //                 // compute new run count for same cube target rule
+    //                 int newSameCubeRun = sameCubeTargetRun;
+    //                 int? newLastTargetCube = lastTargetCube;
+    //                 if (isTarget)
+    //                 {
+    //                     if (lastTargetCube.HasValue && lastTargetCube.Value == c)
+    //                         newSameCubeRun++;
+    //                     else
+    //                     {
+    //                         newSameCubeRun = 1;
+    //                         newLastTargetCube = c;
+    //                     }
 
-//                     // reject if >2 same-cube targets consecutively
-//                     if (newSameCubeRun > 2)
-//                         continue;
-//                 }
-//                 else
-//                 {
-//                     // optionally reset run on non-targets
-//                     // newSameCubeRun = 0; newLastTargetCube = null;
-//                 }
+    //                     // reject if >2 same-cube targets consecutively
+    //                     if (newSameCubeRun > 2)
+    //                         continue;
+    //                 }
+    //                 else
+    //                 {
+    //                     // optionally reset run on non-targets
+    //                     // newSameCubeRun = 0; newLastTargetCube = null;
+    //                 }
 
-//                 // commit
-//                 seq[t] = (c, isTarget);
-//                 int oldLast = lastHighlight[c];
-//                 int oldBlocked = blockedUntil[c];
-//                 int oldPrevGhost = prevGhostCube;
+    //                 // commit
+    //                 seq[t] = (c, isTarget);
+    //                 int oldLast = lastHighlight[c];
+    //                 int oldBlocked = blockedUntil[c];
+    //                 int oldPrevGhost = prevGhostCube;
 
-//                 if (isTarget)
-//                 {
-//                     targetQuota[c]--;
-//                     lastHighlight[c] = t;
-//                     blockedUntil[c] = t + n + 1; // block this cube for next n trials
-//                     prevGhostCube = c; // new ghost cube
-//                 }
-//                 else
-//                 {
-//                     nonTargetQuota[c]--;
-//                     lastHighlight[c] = t;
-//                 }
+    //                 if (isTarget)
+    //                 {
+    //                     targetQuota[c]--;
+    //                     lastHighlight[c] = t;
+    //                     blockedUntil[c] = t + n + 1; // block this cube for next n trials
+    //                     prevGhostCube = c; // new ghost cube
+    //                 }
+    //                 else
+    //                 {
+    //                     nonTargetQuota[c]--;
+    //                     lastHighlight[c] = t;
+    //                 }
 
-//                 if (Backtrack(
-//                     t + 1,
-//                     targetsLeft - (isTarget ? 1 : 0),
-//                     nonTargetsLeft - (isTarget ? 0 : 1),
-//                     isTarget ? t : lastTargetTrial,
-//                     isTarget ? consecutiveTargets + 1 : 0,
-//                     prevGhostCube,
-//                     newLastTargetCube,
-//                     newSameCubeRun))
-//                 {
-//                     return true;
-//                 }
+    //                 if (Backtrack(
+    //                     t + 1,
+    //                     targetsLeft - (isTarget ? 1 : 0),
+    //                     nonTargetsLeft - (isTarget ? 0 : 1),
+    //                     isTarget ? t : lastTargetTrial,
+    //                     isTarget ? consecutiveTargets + 1 : 0,
+    //                     prevGhostCube,
+    //                     newLastTargetCube,
+    //                     newSameCubeRun))
+    //                 {
+    //                     return true;
+    //                 }
 
-//                 // backtrack
-//                 if (isTarget) targetQuota[c]++; else nonTargetQuota[c]++;
-//                 lastHighlight[c] = oldLast;
-//                 blockedUntil[c] = oldBlocked;
-//                 prevGhostCube = oldPrevGhost;
-//             }
-//         }
+    //                 // backtrack
+    //                 if (isTarget) targetQuota[c]++; else nonTargetQuota[c]++;
+    //                 lastHighlight[c] = oldLast;
+    //                 blockedUntil[c] = oldBlocked;
+    //                 prevGhostCube = oldPrevGhost;
+    //             }
+    //         }
 
-//         return false;
-//     }
+    //         return false;
+    //     }
 
-//     bool ok = Backtrack(0, K, NT, -1, 0, -1, null, 0);
-//     if (!ok)
-//     {
-//         Debug.LogError("GenerateTrials: backtracking failed (parameters may be infeasible).");
-//     }
+    //     bool ok = Backtrack(0, K, NT, -1, 0, -1, null, 0);
+    //     if (!ok)
+    //     {
+    //         Debug.LogError("GenerateTrials: backtracking failed (parameters may be infeasible).");
+    //     }
 
-//     return seq.ToList();
-// }
+    //     return seq.ToList();
+    // }
 
     private List<(int cubeIdx, bool isTarget)> GenerateTrialsDummy()
     {
@@ -488,7 +510,7 @@ public class TrialManager : MonoBehaviour
 
         // Just 10 trials: alternating between cube 0 and cube 1
         var dummy = new List<(int, bool)>();
-        for (int i = 0; i < 20; i++)
+        for (int i = 0; i < 1000; i++)
         {
             int cube = i % cubes.Count;   // cycle through cubes
             bool isTarget = i % 2 == 0; // every other trial is a target
@@ -498,6 +520,99 @@ public class TrialManager : MonoBehaviour
         Debug.Log($"Generated {dummy.Count} dummy trials.");
         return dummy;
     }
+    
+
+
+    // Put this inside TrialManager.cs
+// Assumes you have: List<(int cubeIdx, bool isTarget)> trialSequence;
+//                   int currentTrial, totalTrials, ghostCubeIdx;
+
+
+/// <summary>
+/// Alert for the next time the ghost cube will need to move.
+/// Finds the next TARGET trial whose cube != current ghost, reports:
+/// - upcoming cube index
+/// - trials until that move
+/// - earliest trial you can start moving (nextTargetIndex - n, clamped to now)
+/// Call this once per trial to print a single actionable alert.
+/// </summary>
+private GhostMoveAlert GetNextGhostMoveAlert(int n)
+{
+    int ct = currentTrial;
+    int currGhost = ghostCubeIdx;
+
+    int nextTargetIdx = -1;
+    int nextTargetCube = -1;
+
+    // Find the NEXT target whose cube differs from current ghost
+    for (int t = ct + 1; t < totalTrials; t++)
+    {
+        var (cubeF, isTargetF) = trialSequence[t];
+        if (isTargetF)
+        {
+            if (cubeF != currGhost)
+            {
+                nextTargetIdx = t;
+                nextTargetCube = cubeF;
+                break;
+            }
+            // else: same cube as ghost → no physical move needed; keep searching
+        }
+    }
+
+    if (nextTargetIdx == -1)
+    {
+        return new GhostMoveAlert { hasMove = false };
+    }
+
+    // Earliest safe start based on your blackout rule: nextTargetIdx - n
+    int earliestStart = Math.Max(ct, nextTargetIdx - n);
+
+    // Sanity check: make sure that cube isn't scheduled in [earliestStart, nextTargetIdx)
+    // (Your generator should guarantee this; if not, slide start forward to first safe spot.)
+    // for (int t = earliestStart; t < nextTargetIdx; t++)
+    // {
+    //     if (trialSequence[t].cubeIdx == nextTargetCube)
+    //     {
+    //         earliestStart = t + 1; // move start past any unexpected use
+    //     }
+    // }
+
+    return new GhostMoveAlert
+    {
+        hasMove = true,
+        upcomingCube = nextTargetCube,
+        nextTargetIndex = nextTargetIdx,
+        trialsUntilMove = nextTargetIdx - ct,
+        earliestStartTrial = earliestStart,
+        trialsUntilEarliestStart = Math.Max(0, earliestStart - ct)
+    };
+}
+
+/// <summary>
+/// Logs a concise, human-usable alert for the upcoming ghost move.
+/// Call this once per trial (after currentTrial is set for that frame).
+/// </summary>
+private void LogNextGhostMoveAlert(int n)
+{
+    var a = GetNextGhostMoveAlert(n);
+    if (!a.hasMove)
+    {
+        // No more moves needed in the remaining schedule
+        Debug.Log($"🔕 No upcoming ghost moves. (currentTrial={currentTrial})");
+        return;
+    }
+
+    // Example: "Next ghost move → cube 4 in 5 trials. You can start in 2 trials (at trial 23)."
+    Debug.LogError(
+        $"{currentTrial}.  🔄 Next ghost move → INDEX {a.upcomingCube} " +
+        $"in {a.trialsUntilMove} trial(s). " +
+        $"You can start in {a.trialsUntilEarliestStart} trial(s) " 
+        // $"(at trial {a.earliestStartTrial}). " +
+        // $"currentTrial={currentTrial}, targetAt={a.nextTargetIndex}"
+    );
+}
+
 
 
 }

@@ -148,6 +148,23 @@ def generate_trials_ortools(num_cubes=5,
                         is_cube[t][c].Not()
                     ])
 
+    # Rule 7c: No more than 2 consecutive non-targets at the same cube position 
+    for c in range(num_cubes):
+        for t in range(2, total_trials):  # start from t=2 so we can look back two trials
+            # Boolean conditions for three consecutive non-targets at the same cube
+            conds = [
+                is_cube[t - 2][c],
+                is_cube[t - 1][c],
+                is_cube[t][c],
+                is_target[t - 2].Not(),
+                is_target[t - 1].Not(),
+                is_target[t].Not()
+            ]
+
+            # OR-Tools constraint: at least one of these must be false
+            # (so you can't have all six true at once)
+            model.AddBoolOr([cond.Not() for cond in conds])
+
     # 8) Linearize target_on_cube and non_target_on_cube booleans
     target_on = [[model.NewBoolVar(f"target_on_{t}_{c}") for c in range(num_cubes)]
                  for t in range(total_trials)]

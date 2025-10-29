@@ -57,6 +57,9 @@ public class CubeLocationManager : MonoBehaviour
             // Horizontal arc 
             Vector3 direction = new Vector3(-Mathf.Sin(angleRad), 0f, Mathf.Cos(angleRad));
             Vector3 arcCenter = new Vector3(elbowPosition.x, tableTopY, elbowPosition.z); 
+            // GPT CODE:
+            // Vector3 elbow = elbowPoint.transform.position;
+            // Vector3 arcCenter = new Vector3(elbow.x, tableTopY, elbow.z);
             Vector3 cubePos = arcCenter + direction * arcRadius;
 
             // Raise cube's Y pos so it sits on top of table
@@ -67,6 +70,7 @@ public class CubeLocationManager : MonoBehaviour
 
             // Make cube look at elbow (horizontally only)
             Vector3 lookTarget = new Vector3(elbowPosition.x, cubePos.y, elbowPosition.z);
+            //GPT CODE: Vector3 lookTarget = new Vector3(elbow.x, cubePos.y, elbow.z);
             cubes[i].transform.LookAt(lookTarget);
         }
     }
@@ -80,6 +84,7 @@ public class CubeLocationManager : MonoBehaviour
             return;
         }
         Vector3 planePos = elbowPosition + Vector3.up * (tipToElbowLength - planeOffsetBelowTipToElbow);
+        // GPT CODE: Vector3 planePos = elbowPoint.transform.position + Vector3.up * (tipToElbowLength - planeOffsetBelowTipToElbow);
         plane.transform.position = planePos;
     }
 }
