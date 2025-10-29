@@ -92,16 +92,18 @@ public class TrialManager : MonoBehaviour
             // real code:
             LoadTrialsFromPython();
             trialSequence = generatedTrials.Select(t => (t.cubeIndex, t.isTarget)).ToList();
+            TrialSeqValidator.Validate(trialSequence, this);
+            TrialSeqValidator.printTrialSeq(trialSequence);
         }
         else
         {
             // for debugging:
             trialSequence = GenerateTrialsDummy();
+            Debug.LogError("⚠️ ⚠️ ⚠️ USING DUMMY TRIAL GENERATOR");
 
         }
         
-        TrialSeqValidator.Validate(trialSequence, this);
-        TrialSeqValidator.printTrialSeq(trialSequence);
+        
     }
     public void LoadTrialsFromPython()
     {
@@ -503,7 +505,7 @@ public class TrialManager : MonoBehaviour
 
     private List<(int cubeIdx, bool isTarget)> GenerateTrialsDummy()
     {
-        Debug.LogWarning("⚠️ Using dummy trial generator!");
+        Debug.LogError("⚠️ Using dummy trial generator!");
 
         // NOTE: hardcoding 5 cubes here
         int iterations = totalTrials / 5;

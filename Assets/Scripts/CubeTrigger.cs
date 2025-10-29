@@ -3,7 +3,7 @@ using System.Collections;
 
 public class CubeTrigger : MonoBehaviour
 {
-    private Renderer objectRenderer;
+    // private Renderer objectRenderer;
     // public Color newColor = Color.yellow;            // used for debugging
 
     public PlaneTrigger planeTrigger;
@@ -15,14 +15,14 @@ public class CubeTrigger : MonoBehaviour
     // so cubeFlag = 0 if participant has successful reset or -1 if participant has not reset)
     // currently, resetting is done by the participant triggering the plane
     // also prevents multilpe triggers of cube-related scripts (due to there being multiple colliderers on hand) 
-    // private int cubeFlag;            
+    // private int cubeFlag;            (MOVED TO PLANETRIGGER TO AVOID HAVING MULTIPLE INSTANCES OF THE FLAG)
     public float timeHitCube;
     private AudioSource aud;
 
     void Start()
     {
-        objectRenderer = GetComponent<Renderer>();
-        planeTrigger.cubeFlag = 0;
+        // objectRenderer = GetComponent<Renderer>();
+        planeTrigger.cubeFlag = -1;
         aud = GetComponent<AudioSource>();
     }
     private void OnTriggerEnter(Collider other)

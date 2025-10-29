@@ -14,7 +14,7 @@ public class PlaneTrigger : MonoBehaviour
 
     void Start()
     {
-        planeFlag = 0;
+        planeFlag = -1;
     }
 
     private void OnTriggerEnter(Collider other)
@@ -30,7 +30,7 @@ public class PlaneTrigger : MonoBehaviour
                 latestCubeHitTime = cube.timeHitCube;
         }
 
-            // allow randomized jitter time to pass + ensure plane can be triggered
+        // allow randomized jitter time to pass + ensure plane can be triggered
         if ((currTime - latestCubeHitTime >= jitterTime) && (planeFlag == 0))
         {
             // sets planeFlag to -1 so that the Plane can't be triggered multiple times
