@@ -24,7 +24,14 @@ public class CaliPhase : MonoBehaviour
         spaceAct = new InputAction(type: InputActionType.Button, binding: "<Keyboard>/space");
         spaceAct.performed += _ => OnSpacePressed();
         spaceAct.Enable();
+        // if (calibrationUI) calibrationUI.SetActive(true);
+
     }
+    private void Start()
+    {
+        if (calibrationUI) calibrationUI.SetActive(true);
+    }
+    
     private void OnDestroy()
     {
         spaceAct.Disable();
