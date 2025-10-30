@@ -12,6 +12,7 @@ using UnityEngine.UI;
 public class CaliPhase : MonoBehaviour
 {
     public PlaneTrigger planeTrigger;
+    
     public GameObject calibrationUI;
     private InputAction spaceAct;
 
@@ -30,6 +31,8 @@ public class CaliPhase : MonoBehaviour
     private void Start()
     {
         if (calibrationUI) calibrationUI.SetActive(true);
+        EventLogger_CSVWriter.Log("Calibration Phase Begun");
+
     }
     
     private void OnDestroy()
@@ -49,7 +52,9 @@ public class CaliPhase : MonoBehaviour
             }
 
             // hide UI
+            
             if (calibrationUI) calibrationUI.SetActive(false);
+            EventLogger_CSVWriter.Log("Calibration Phase Over");
 
             waiting = false;
             Debug.LogError("[CaliPhase] Calibration complete. Systems enabled.");

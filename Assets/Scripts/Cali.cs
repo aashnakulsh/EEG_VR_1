@@ -91,10 +91,12 @@ public class Calibrate_UseFriendsLogic : MonoBehaviour
 
         if (verbose)
         {
-            Debug.Log("---- Calibration (friend's logic) ----");
+            Debug.Log("--------- Calibration ---------");
             Debug.Log("Click order with trigger: 0=Front-Left, 1=Front-Right, 2=Back-Left");
             Debug.Log("--------------------------------------");
         }
+        EventLogger_CSVWriter.Log("Manual 3-Point Calibration Begun");
+
     }
 
     void Capture()
@@ -116,9 +118,10 @@ public class Calibrate_UseFriendsLogic : MonoBehaviour
 
         if (idx == 3)
         {
-            Calibrate();            // run your friend's math
+            Calibrate();            
             calibrating = false;
             if (verbose) Debug.Log("[Calib] ✅ Done.");
+            EventLogger_CSVWriter.Log("Manual 3-Point Calibration Over");
         }
     }
 
