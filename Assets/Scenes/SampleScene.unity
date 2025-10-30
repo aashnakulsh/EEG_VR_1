@@ -11512,7 +11512,6 @@ GameObject:
   - component: {fileID: 1647396515}
   - component: {fileID: 1647396514}
   - component: {fileID: 1647396513}
-  - component: {fileID: 1647396512}
   m_Layer: 5
   m_Name: Cali Canvas
   m_TagString: Untagged
@@ -11540,25 +11539,6 @@ RectTransform:
   m_AnchoredPosition: {x: 600.2123, y: 346.49}
   m_SizeDelta: {x: 1195, y: 693}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1647396512
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1647396510}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 717a6fe49855a13449bd3e5d870cd23e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  trialManager: {fileID: 1129724818}
-  breakPanel: {fileID: 1647396510}
-  breakMessageText: {fileID: 0}
-  countdownText: {fileID: 0}
-  trialCountText: {fileID: 0}
-  scoreText: {fileID: 0}
-  totalBreakDuration: 0
 --- !u!114 &1647396513
 MonoBehaviour:
   m_ObjectHideFlags: 0
