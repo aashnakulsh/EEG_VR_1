@@ -330,6 +330,7 @@ MonoBehaviour:
   trialManager: {fileID: 1129724818}
   cubeFlag: 0
   timeHitPlane: 0
+  eeg: {fileID: 0}
 --- !u!135 &189075464
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -861,6 +862,7 @@ MonoBehaviour:
   trialCountText: {fileID: 1491540093}
   scoreText: {fileID: 2020874760}
   totalBreakDuration: 0
+  eeg: {fileID: 0}
 --- !u!1 &334129582
 GameObject:
   m_ObjectHideFlags: 0
@@ -1894,6 +1896,7 @@ MonoBehaviour:
   trialManager: {fileID: 1129724818}
   cubeFlag: 0
   timeHitPlane: 0
+  eeg: {fileID: 0}
 --- !u!54 &592522843
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -3256,6 +3259,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   planeTrigger: {fileID: 592522842}
   calibrationUI: {fileID: 1647396510}
+  calibrationLabel: {fileID: 0}
+  preCalibrationRestSeconds: 5
+  eeg: {fileID: 0}
 --- !u!1 &1113587958
 GameObject:
   m_ObjectHideFlags: 0
@@ -3562,6 +3568,7 @@ MonoBehaviour:
   scriptPath: Scripts/trial_generator_ortools.py
   maxTimeSeconds: 300
   generatedTrials: []
+  eeg: {fileID: 0}
 --- !u!4 &1129724819
 Transform:
   m_ObjectHideFlags: 0

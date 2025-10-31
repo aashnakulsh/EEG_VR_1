@@ -74,7 +74,7 @@ public class CaliPhase : MonoBehaviour
 
     private InputAction spaceAct;
 
-    [SerializeField] private int preCalibrationRestSeconds = 180; // 3 minutes
+    [SerializeField] private int preCalibrationRestSeconds = 5; // 3 minutes
     [SerializeField] private EEGMarkerPatterns eeg;
 
     private bool waiting = false; // ignore SPACE during rest
@@ -130,8 +130,7 @@ public class CaliPhase : MonoBehaviour
         if (planeTrigger)
         {
             planeTrigger.ResetCubeFlag();
-            // planeTrigger.ResetPlaneFlag();
-            planeTrigger.ResetPlaneFlagWithoutEEG();
+            planeTrigger.ResetPlaneFlagFirst();
         }
 
         if (calibrationUI) calibrationUI.SetActive(false);

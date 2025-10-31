@@ -8230,7 +8230,7 @@ MonoBehaviour:
   planeTrigger: {fileID: 592522842}
   calibrationUI: {fileID: 1647396510}
   calibrationLabel: {fileID: 367407776}
-  preCalibrationRestSeconds: 180
+  preCalibrationRestSeconds: 5
   eeg: {fileID: 1780580076}
 --- !u!1 &1094982800
 GameObject:
@@ -12658,7 +12658,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1780580072}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2922b2cb2c31f8d4490115f30a798b06, type: 3}
   m_Name: 

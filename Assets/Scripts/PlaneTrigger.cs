@@ -60,9 +60,11 @@ public class PlaneTrigger : MonoBehaviour
         eeg?.MarkTrialEnd();
     }
 
-    public void ResetPlaneFlagWithoutEEG()
+    public void ResetPlaneFlagFirst()
     {
         planeFlag = 0;
+        eeg?.MarkBlockStart();
+
     }
 
 }

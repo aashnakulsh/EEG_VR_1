@@ -233,6 +233,7 @@ public class TrialManager : MonoBehaviour
         if (currentTrial >= totalTrials)
         {
             // Experiment is complete
+            eeg?.MarkBlockEnd();
             Debug.LogError("Experiment complete");
             EventLogger_CSVWriter.Log("Experiment Complete");
             eeg?.MarkExperimentEnd();
