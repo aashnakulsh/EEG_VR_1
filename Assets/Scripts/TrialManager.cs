@@ -42,9 +42,7 @@ public class TrialManager : MonoBehaviour
     public int totalPossibleScore;
     public int currTargetCubeIdx = -1;
     public float TrialStartTime;
-
-
-    // Setup
+     // Setup
     private List<int> targetTrialIndices = new List<int>();
     private System.Random rng = new System.Random();
     private List<(int cubeIndex, bool isTarget)> trialSequence;
@@ -77,6 +75,17 @@ public class TrialManager : MonoBehaviour
         public int earliestStartTrial;
         public int trialsUntilEarliestStart;
     }
+
+    // EEG Marker code
+    [SerializeField] private EEGMarkerPatterns eeg;
+
+    // [SerializeField] private GameObject eegObject;
+    // private EEGMarkerPatterns eeg;          
+    // private void Awake()
+    // {
+    //     if (eegObject != null)
+    //         eeg = eegObject.GetComponent<EEGMarkerPatterns>();
+    // }            
 
         
     private void Start()
@@ -212,6 +221,7 @@ public class TrialManager : MonoBehaviour
         tookBreak = false;
         if ((currentTrial != 0) && (currentTrial != totalTrials) && (currentTrial % breakInterval == 0))
         {
+            eeg?.MarkBlockEnd();
             // Runs break
             Debug.LogWarning("START BREAK");
             onBreak = true;
@@ -219,11 +229,13 @@ public class TrialManager : MonoBehaviour
 
             yield return breakUI.ShowBreakUI(minimumBreakTime, currentTrial, totalTrials, score, totalPossibleScore);
         }
+
         if (currentTrial >= totalTrials)
         {
             // Experiment is complete
             Debug.LogError("Experiment complete");
             EventLogger_CSVWriter.Log("Experiment Complete");
+            eeg?.MarkExperimentEnd();
             isExperimentComplete = true;
 
             breakUI.ShowExperimentComplete(currentTrial, totalTrials, score, totalPossibleScore);
@@ -233,19 +245,6 @@ public class TrialManager : MonoBehaviour
         var (nextCubeIdx, isTargetTrial) = trialSequence[currentTrial];
         currTargetCubeIdx = nextCubeIdx;
 
-        // var nextCubeIdxN = -1;
-        // var isTargetTrialN = false;
-
-        // check within the next n trials, if a cube is ghost -> debug.log which index + in how many trials (trials first then index)
-        // if ((currentTrial + n) < totalTrials)
-        // {
-        //     (nextCubeIdxN, isTargetTrialN) = trialSequence[currentTrial + n];
-        // }
-        // else
-        // {
-        //     (nextCubeIdxN, isTargetTrialN) = (-1, false);
-        // }
-
         if (isTargetTrial)
         {
             ghostCubeIdx = currTargetCubeIdx;
@@ -253,38 +252,16 @@ public class TrialManager : MonoBehaviour
             Debug.LogError("\n==================== TARGET ====================\n");
         }
 
-        // if (isTargetTrial) Debug.Log("\n==================== TARGET ====================\n");
-
         LogNextGhostMoveAlert(n);
-
-        // if (isTargetTrialN) Debug.LogError($"🔄🔄🔄 Switch ghost cube to INDEX {nextCubeIdxN} in {n} trials!");
 
         // When cube is highlighted, next trial begins
         HighlightCube(currTargetCubeIdx);
         EventLogger_CSVWriter.Log($"Trial {currentTrial + 1} Begins");
+        eeg?.MarkTrialStart();
         TrialStartTime = Time.time;
         currentTrial++;
     }
-
-        // Change ghost cube at set intervals
-        // if (currentTrial % ghostUpdateInterval == 0 && currentTrial != 0)
-        // {
-        //     PickNewGhostCube();
-        // }
-
-        // if it's a target trial, determines highlights ghost cube
-        // bool isTargetTrial = targetTrialIndices.Contains(currentTrial);
-        // if (isTargetTrial)
-        // {
-        //     currentTargetCubeIdx = ghostCubeIdx;
-        // }
-        // // not a target trial, so determines a non-ghost cube to highlight
-        // else
-        // {
-        //     // Choose a non-ghost cube
-        //     List<int> options = Enumerable.Range(0, cubes.Count).Where(i => i != ghostCubeIdx).ToList();
-        //     currentTargetCubeIdx = options[rng.Next(options.Count)];
-        // }
+ 
     private void HighlightCube(int idx)
     {
         for (int i = 0; i < cubes.Count; i++)

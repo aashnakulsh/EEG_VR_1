@@ -127,14 +127,11 @@ public class MarkerTest : MonoBehaviour
     // Test plan: 5s, 10s, 15s pulses, then five 1s pulses
     private System.Collections.IEnumerator TestSequence()
     {
-        UnityEngine.Debug.LogError("TESTSEQ STARTED");
         var sender = FindObjectOfType<EEGMarkerSender>();
         if (sender == null) { UnityEngine.Debug.LogError("EEGMarkerSender not found"); yield break; }
 
         // small settle time
         yield return new WaitForSeconds(0.5f);
-        UnityEngine.Debug.LogError("SETTLE TIME DONE");
-
         // Long pulses (1 s gap after each)
         yield return SendAndLog(sender, 5, 5000, 1f);   // 5 s + 1 s gap
         yield return SendAndLog(sender, 10, 10000, 1f); // 10 s + 1 s gap

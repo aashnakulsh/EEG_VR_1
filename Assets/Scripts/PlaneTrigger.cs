@@ -5,12 +5,12 @@ using System.Collections.Generic;
 public class PlaneTrigger : MonoBehaviour
 {
     public List<CubeTrigger> cubeTriggers;
-    public TrialManager trialManager;
-    // public CubeTrigger cubeTrigger;
-    // public Calibration calibration;
+    public TrialManager trialManager; 
     public int cubeFlag;
     private int planeFlag;
     public float timeHitPlane;
+    [SerializeField] private EEGMarkerPatterns eeg;
+
 
     void Start()
     {
@@ -54,6 +54,13 @@ public class PlaneTrigger : MonoBehaviour
     }
     // called in CubeTrigger.cs to reset planeFlag (similar to how we reset cubeTrigger)
     public void ResetPlaneFlag()
+    {
+        planeFlag = 0;
+        // trial is over so:
+        eeg?.MarkTrialEnd();
+    }
+
+    public void ResetPlaneFlagWithoutEEG()
     {
         planeFlag = 0;
     }

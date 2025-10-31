@@ -17,6 +17,8 @@ public class CubeTrigger : MonoBehaviour
     // also prevents multilpe triggers of cube-related scripts (due to there being multiple colliderers on hand) 
     // private int cubeFlag;            (MOVED TO PLANETRIGGER TO AVOID HAVING MULTIPLE INSTANCES OF THE FLAG)
     public float timeHitCube;
+
+ 
     private AudioSource aud;
 
     void Start()
@@ -39,6 +41,7 @@ public class CubeTrigger : MonoBehaviour
 
             // getting statistics for logging
             timeHitCube = Time.time;
+            // eeg?.MarkTrialEnd();
             EventLogger_CSVWriter.Log($"Cube Touched: {cubeIdx}");  
 
             planeTrigger.ResetPlaneFlag();               // Allow plane to be touched again by reseting plane trigger counter

@@ -18,6 +18,8 @@ public class BreakUIController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI scoreText;         // Text for score 
 
     public float totalBreakDuration;        // includes minimum break time + optional break time from the participant (in seconds)
+    [SerializeField] private EEGMarkerPatterns eeg;
+
     private InputAction continueAction;     
     private bool spacePressed;
 
@@ -81,6 +83,8 @@ public class BreakUIController : MonoBehaviour
         trialManager.onBreak = false;
         breakPanel.SetActive(false);
         EventLogger_CSVWriter.Log("Break Over");
+        eeg?.MarkBlockStart();
+
     }
 
     // Called from TrialManager.cs when experiment is complete

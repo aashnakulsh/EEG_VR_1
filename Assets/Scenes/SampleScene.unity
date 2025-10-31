@@ -1537,6 +1537,7 @@ MonoBehaviour:
   trialManager: {fileID: 1129724818}
   cubeFlag: 0
   timeHitPlane: 0
+  eeg: {fileID: 0}
 --- !u!135 &189075464
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -2506,6 +2507,7 @@ MonoBehaviour:
   trialCountText: {fileID: 1491540093}
   scoreText: {fileID: 2020874760}
   totalBreakDuration: 0
+  eeg: {fileID: 1780580076}
 --- !u!1 &342069345
 GameObject:
   m_ObjectHideFlags: 0
@@ -4259,6 +4261,7 @@ MonoBehaviour:
   trialManager: {fileID: 1129724818}
   cubeFlag: 0
   timeHitPlane: 0
+  eeg: {fileID: 1780580076}
 --- !u!54 &592522843
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -5945,6 +5948,7 @@ Transform:
   - {fileID: 2088236477}
   - {fileID: 1086323124}
   - {fileID: 1824265059}
+  - {fileID: 1780580073}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &791892217
@@ -8225,6 +8229,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   planeTrigger: {fileID: 592522842}
   calibrationUI: {fileID: 1647396510}
+  calibrationLabel: {fileID: 367407776}
+  preCalibrationRestSeconds: 180
+  eeg: {fileID: 1780580076}
 --- !u!1 &1094982800
 GameObject:
   m_ObjectHideFlags: 0
@@ -8867,6 +8874,7 @@ MonoBehaviour:
   scriptPath: Scripts/trial_generator_ortools.py
   maxTimeSeconds: 300
   generatedTrials: []
+  eeg: {fileID: 1780580076}
 --- !u!4 &1129724819
 Transform:
   m_ObjectHideFlags: 0
@@ -12582,6 +12590,80 @@ Transform:
   - {fileID: 623117086}
   m_Father: {fileID: 342069346}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1780580072
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1780580073}
+  - component: {fileID: 1780580075}
+  - component: {fileID: 1780580074}
+  - component: {fileID: 1780580076}
+  m_Layer: 0
+  m_Name: EEGManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1780580073
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1780580072}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 772415467}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1780580074
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1780580072}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c799d4b983f647f498c88cab0d9325b6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1780580075
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1780580072}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5d0aa3d89bdab44a9d151f4866a7ae7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  portName: COM3
+  baudRate: 115200
+  defaultPulseMs: 5
+--- !u!114 &1780580076
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1780580072}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2922b2cb2c31f8d4490115f30a798b06, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  defaultGapMs: 20
 --- !u!1 &1793568444
 GameObject:
   m_ObjectHideFlags: 0
