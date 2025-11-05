@@ -78,6 +78,8 @@ public class EEGMarkerPatterns : MonoBehaviour
     public void MarkBlockEnd()        { SendBurst(1, 3, sender.defaultPulseMs, defaultGapMs); UnityEngine.Debug.LogWarning("---------------MarkBlockEnd ran!"); }     // in StartNextTrial() of Trialmanager.cs twice (once before a break and another at end of experiment)
     public void MarkTrialStart()      { SendBurst(1, 2, sender.defaultPulseMs, defaultGapMs); UnityEngine.Debug.LogWarning("----------MarkTrialStart ran!"); }     // in StartNextTrial() of Trialmanager.cs
     public void MarkTrialEnd()        { SendBurst(1, 1, sender.defaultPulseMs, defaultGapMs); UnityEngine.Debug.LogWarning("---MarkTrialEnd ran!"); }     // in OnTriggerEnter() of PlaneTrigger.cs
+    public void BaselinePhaseStart() { SendBurst(1, 1, sender.defaultPulseMs, defaultGapMs); UnityEngine.Debug.LogWarning("---BaselinePhaseStart ran!"); }     // in OnTriggerEnter() of PlaneTrigger.cs
+    public void BaselinePhaseEnd() { SendBurst(1, 1, sender.defaultPulseMs, defaultGapMs); UnityEngine.Debug.LogWarning("---BaselinePhaseEnd ran!"); }     // in OnTriggerEnter() of PlaneTrigger.cs
 
     // Overloads that let you specify the code explicitly
     // public void MarkExperimentStart(int code) { SendBurst(code, 4, GetDefaultPulse(), defaultGapMs); }

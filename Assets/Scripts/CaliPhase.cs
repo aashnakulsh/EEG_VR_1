@@ -74,7 +74,7 @@ public class CaliPhase : MonoBehaviour
 
     private InputAction spaceAct;
 
-    [SerializeField] private int preCalibrationRestSeconds = 5; // 3 minutes
+    [SerializeField] private int preCalibrationRestSeconds = 180; // 3 minutes
     [SerializeField] private EEGMarkerPatterns eeg;
 
     private bool waiting = false; // ignore SPACE during rest
@@ -83,34 +83,42 @@ public class CaliPhase : MonoBehaviour
     {
         if (calibrationUI) calibrationUI.SetActive(true); // show the same panel during rest
 
-        spaceAct = new InputAction(type: InputActionType.Button, binding: "<Keyboard>/space");
-        spaceAct.performed += _ => OnSpacePressed();
+        spaceAct = new InputAction(type: InputActionType.Button, binding: "<Keyboard>/s");
+        spaceAct.performed += _ =>
+        {
+            OnSpacePressed();
+            UnityEngine.Debug.LogError("S HAS BEEN PRESSED!");
+        };
         spaceAct.Enable();
 
-        StartCoroutine(RestThenShowCalibration());
     }
 
     private void Start()
     {
         EventLogger_CSVWriter.Log("Calibration Phase Begun");
+        StartCoroutine(RestThenShowCalibration());
+
     }
 
     private System.Collections.IEnumerator RestThenShowCalibration()
     {
+        Debug.LogError("IN REST THEN SHOW CALI PHASE");
         int t = Mathf.Max(0, preCalibrationRestSeconds);
+        eeg?.BaselinePhaseStart();
 
         // Countdown on the SAME UI
         while (t > 0)
         {
             if (calibrationLabel)
-                // calibrationLabel.text = $"";
+                //calibrationLabel.text = $"";
                 Debug.LogError($"Please rest to create a baseline for the EEG\n{t / 60:D2}:{t % 60:D2}");
-            calibrationLabel.text = "";     // no text/countdown
+                calibrationLabel.text = "";     // no text/countdown
             yield return new WaitForSeconds(1f);
             t--;
         }
+        eeg?.BaselinePhaseEnd();
 
-        eeg?.MarkExperimentStart();
+
         
         if (calibrationLabel)
             calibrationLabel.text = "Calibrate table now.\nPress SPACE when finished.";
@@ -135,6 +143,8 @@ public class CaliPhase : MonoBehaviour
 
         if (calibrationUI) calibrationUI.SetActive(false);
         EventLogger_CSVWriter.Log("Calibration Phase Over");
+        eeg?.MarkExperimentStart(); // since calibration phase is over, we can send start experiement markers
+
 
         waiting = false;
         Debug.LogError("[CaliPhase] Calibration complete.");
