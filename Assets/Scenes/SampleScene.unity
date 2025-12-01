@@ -8513,7 +8513,7 @@ Transform:
   m_GameObject: {fileID: 1113587958}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 2.865, y: 0.7592, z: -6.121}
+  m_LocalPosition: {x: 2.865, y: 0.42, z: -6.121}
   m_LocalScale: {x: -0.04, y: -0.04, z: -0.040000007}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -8856,7 +8856,7 @@ MonoBehaviour:
   minTargetGap: 2
   maxTargetGap: 6
   n: 3
-  totalTrials: 500
+  totalTrials: 20
   targetTrialPercentage: 0.2
   isExperimentComplete: 0
   onBreak: 0
