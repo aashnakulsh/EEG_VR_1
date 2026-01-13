@@ -251,6 +251,11 @@ public class TrialManager : MonoBehaviour
             ghostCubeIdx = currTargetCubeIdx;
             EventLogger_CSVWriter.Log($"Ghost Cube to index: {ghostCubeIdx}");
             Debug.LogError("\n==================== TARGET ====================\n");
+            eeg?.MarkTargetTrialStart();
+        }
+        else
+        {
+            eeg?.MarkNonTargetTrialStart();
         }
 
         LogNextGhostMoveAlert(n);
@@ -258,7 +263,7 @@ public class TrialManager : MonoBehaviour
         // When cube is highlighted, next trial begins
         HighlightCube(currTargetCubeIdx);
         EventLogger_CSVWriter.Log($"Trial {currentTrial + 1} Begins");
-        eeg?.MarkTrialStart();
+        // eeg?.MarkTrialStart();
         TrialStartTime = Time.time;
         currentTrial++;
     }

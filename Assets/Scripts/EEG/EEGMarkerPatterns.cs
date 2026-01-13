@@ -72,12 +72,17 @@ public class EEGMarkerPatterns : MonoBehaviour
     // }
 
     // === Convenience helpers (use defaults) ===
-    public void MarkExperimentStart() { SendBurst(1, 4, sender.defaultPulseMs, defaultGapMs); UnityEngine.Debug.LogWarning("--------------------------------MarkExperimentStart ran!"); }     // in RestThenShowCalibration() of CaliPhase.cs
-    public void MarkExperimentEnd()   { SendBurst(1, 4, sender.defaultPulseMs, defaultGapMs); UnityEngine.Debug.LogWarning("-------------------------MarkExperimentEnd ran!"); }     // in StartNextTrial() of Trialmanager.cs
-    public void MarkBlockStart()      { SendBurst(1, 3, sender.defaultPulseMs, defaultGapMs); UnityEngine.Debug.LogWarning("-------------------MarkBlockStart ran!"); }     // in ShowBreakUI() of BreakUIController.cs AND ResetPlaneFlagFirst() of CaliPhase.cs
-    public void MarkBlockEnd()        { SendBurst(1, 3, sender.defaultPulseMs, defaultGapMs); UnityEngine.Debug.LogWarning("---------------MarkBlockEnd ran!"); }     // in StartNextTrial() of Trialmanager.cs twice (once before a break and another at end of experiment)
-    public void MarkTrialStart()      { SendBurst(1, 2, sender.defaultPulseMs, defaultGapMs); UnityEngine.Debug.LogWarning("----------MarkTrialStart ran!"); }     // in StartNextTrial() of Trialmanager.cs
+    public void MarkExperimentStart() { SendBurst(1, 5, sender.defaultPulseMs, defaultGapMs); UnityEngine.Debug.LogWarning("--------------------------------MarkExperimentStart ran!"); }     // in RestThenShowCalibration() of CaliPhase.cs
+    public void MarkExperimentEnd()   { SendBurst(1, 5, sender.defaultPulseMs, defaultGapMs); UnityEngine.Debug.LogWarning("-------------------------MarkExperimentEnd ran!"); }     // in StartNextTrial() of Trialmanager.cs
+    public void MarkBlockStart()      { SendBurst(1, 4, sender.defaultPulseMs, defaultGapMs); UnityEngine.Debug.LogWarning("-------------------MarkBlockStart ran!"); }     // in ShowBreakUI() of BreakUIController.cs AND ResetPlaneFlagFirst() of CaliPhase.cs
+    public void MarkBlockEnd()        { SendBurst(1, 5, sender.defaultPulseMs, defaultGapMs); UnityEngine.Debug.LogWarning("---------------MarkBlockEnd ran!"); }     // in StartNextTrial() of Trialmanager.cs twice (once before a break and another at end of experiment)
+    // public void MarkTrialStart()      { SendBurst(1, 2, sender.defaultPulseMs, defaultGapMs); UnityEngine.Debug.LogWarning("----------MarkTrialStart ran!"); }     // in StartNextTrial() of Trialmanager.cs
+    public void MarkTargetTrialStart()      { SendBurst(1, 3, sender.defaultPulseMs, defaultGapMs); UnityEngine.Debug.LogWarning("----------MarkTargetTrialStart ran!"); }     // in StartNextTrial() of Trialmanager.cs
+    public void MarkNonTargetTrialStart()      { SendBurst(1, 2, sender.defaultPulseMs, defaultGapMs); UnityEngine.Debug.LogWarning("----------MarkNonTargetTrialStart ran!"); }     // in StartNextTrial() of Trialmanager.cs
     public void MarkTrialEnd()        { SendBurst(1, 1, sender.defaultPulseMs, defaultGapMs); UnityEngine.Debug.LogWarning("---MarkTrialEnd ran!"); }     // in OnTriggerEnter() of PlaneTrigger.cs
+    // public void MarkTargetTrialEnd()        { SendBurst(1, 1, sender.defaultPulseMs, defaultGapMs); UnityEngine.Debug.LogWarning("---MarkTrialEnd ran!"); }     // in OnTriggerEnter() of PlaneTrigger.cs
+    // public void MarkNonTargetTrialEnd()        { SendBurst(1, 1, sender.defaultPulseMs, defaultGapMs); UnityEngine.Debug.LogWarning("---MarkTrialEnd ran!"); }     // in OnTriggerEnter() of PlaneTrigger.cs
+
     public void BaselinePhaseStart() { SendBurst(1, 1, sender.defaultPulseMs, defaultGapMs); UnityEngine.Debug.LogWarning("---BaselinePhaseStart ran!"); }     // in OnTriggerEnter() of PlaneTrigger.cs
     public void BaselinePhaseEnd() { SendBurst(1, 1, sender.defaultPulseMs, defaultGapMs); UnityEngine.Debug.LogWarning("---BaselinePhaseEnd ran!"); }     // in OnTriggerEnter() of PlaneTrigger.cs
 
