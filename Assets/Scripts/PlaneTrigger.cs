@@ -31,21 +31,23 @@ public class PlaneTrigger : MonoBehaviour
         }
 
         // allow randomized jitter time to pass + ensure plane can be triggered
-        if ((currTime - latestCubeHitTime >= jitterTime) && (planeFlag == 0))
+        if (planeFlag == 0)
         {
             // sets planeFlag to -1 so that the Plane can't be triggered multiple times
             planeFlag = -1;
-            Debug.LogWarning("Plane triggered: advancing to next trial");
-            EventLogger_CSVWriter.Log("Plane Triggered");
+            if (currTime - latestCubeHitTime >= jitterTime){
+                Debug.LogWarning("Plane triggered: advancing to next trial");
+                EventLogger_CSVWriter.Log("Plane Triggered");
 
-            timeHitPlane = Time.time;
+                timeHitPlane = Time.time;
 
-            // Allows cubes to be hit
-            //reset cube trigger flag
-            ResetCubeFlag();
+                // Allows cubes to be hit
+                //reset cube trigger flag
+                ResetCubeFlag();
 
-            // Begins next trial
-            StartCoroutine(trialManager.StartNextTrial());
+                // Begins next trial
+                StartCoroutine(trialManager.StartNextTrial());
+            }
         }
     }
     public void ResetCubeFlag()
