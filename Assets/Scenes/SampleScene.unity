@@ -8230,7 +8230,7 @@ MonoBehaviour:
   planeTrigger: {fileID: 592522842}
   calibrationUI: {fileID: 1647396510}
   calibrationLabel: {fileID: 367407776}
-  preCalibrationRestSeconds: 2
+  preCalibrationRestSeconds: 3
   eeg: {fileID: 1780580076}
 --- !u!1 &1094982800
 GameObject:
@@ -8853,14 +8853,14 @@ MonoBehaviour:
   defaultColor: {r: 0.21176471, g: 0.26666668, b: 0.81960785, a: 0}
   ghostColor: {r: 0.21176472, g: 0.26666668, b: 0.8196079, a: 1}
   noGhostStartTrials: 5
-  minTargetGap: 2
+  minTargetGap: 3
   maxTargetGap: 6
   n: 3
-  totalTrials: 20
+  totalTrials: 500
   targetTrialPercentage: 0.2
   isExperimentComplete: 0
   onBreak: 0
-  breakInterval: 10
+  breakInterval: 100
   breakUI: {fileID: 332175038}
   minimumBreakTime: 5
   tookBreak: 0
@@ -14534,7 +14534,7 @@ MonoBehaviour:
   plane: {fileID: 592522841}
   table: {fileID: 641606729}
   elbowPoint: {fileID: 1113587958}
-  tipToElbowLength: 0.45
+  tipToElbowLength: 0.46
   planeOffsetBelowTipToElbow: 0.03
 --- !u!4 &2088236477
 Transform:
