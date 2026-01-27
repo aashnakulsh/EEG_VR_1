@@ -490,10 +490,7 @@ public class TrialManager : MonoBehaviour
     {
         Debug.LogError("⚠️ Using dummy trial generator!");
 
-        // NOTE: hardcoding 5 cubes here
-        // int iterations = totalTrials / 5; (old code notneeded)
 
-        // Just 10 trials: alternating between cube 0 and cube 1
         var dummy = new List<(int, bool)>();
         for (int i = 0; i < totalTrials; i++)
         {
