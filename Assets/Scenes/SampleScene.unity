@@ -8204,6 +8204,8 @@ MonoBehaviour:
   controllerTip: {fileID: 1468548370}
   virtualSpace: {fileID: 1975927349}
   anchor: {fileID: 2132233164}
+  table: {fileID: 641606733}
+  tableYOffset: -0.11176
   vPoints:
   - {fileID: 1960459621}
   - {fileID: 493374679}
@@ -8856,11 +8858,11 @@ MonoBehaviour:
   minTargetGap: 3
   maxTargetGap: 6
   n: 3
-  totalTrials: 500
+  totalTrials: 10
   targetTrialPercentage: 0.2
   isExperimentComplete: 0
   onBreak: 0
-  breakInterval: 100
+  breakInterval: 5
   breakUI: {fileID: 332175038}
   minimumBreakTime: 5
   tookBreak: 0

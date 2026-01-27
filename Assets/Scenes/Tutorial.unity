@@ -7948,6 +7948,8 @@ MonoBehaviour:
   controllerTip: {fileID: 1468548370}
   virtualSpace: {fileID: 1975927349}
   anchor: {fileID: 2132233164}
+  table: {fileID: 641606733}
+  tableYOffset: -0.11176
   vPoints:
   - {fileID: 1960459621}
   - {fileID: 493374679}

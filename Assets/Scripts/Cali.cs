@@ -7,8 +7,15 @@ public class Calibrate_UseFriendsLogic : MonoBehaviour
     public Transform controllerTip;           // tip you poke with
     public Transform virtualSpace;            // EMPTY root we move/rotate (friend's virtualSpace)
     public Transform anchor;                  // child of virtualSpace at local (0,0,+1)
+
+    
+    [Header("Table")]
+    public Transform table;                   // the actual table object to move in Y
 //      [SerializeField] private MeshRenderer tabletopRenderer;  
 // [   SerializeField] private float tableHeight = 0.74f;  
+    [Header("Y Offset")]
+    public float tableYOffset = -0.11176f; // positive = move table up, negative = down
+
     [Tooltip("3 virtual corner markers, IN ORDER: 0=front-left, 1=front-right, 2=back-left")]
     public Transform[] vPoints = new Transform[3];
 
@@ -62,7 +69,7 @@ public class Calibrate_UseFriendsLogic : MonoBehaviour
 
     void Begin()
     {
-        if (!controllerTip || !virtualSpace || !anchor || vPoints[0]==null || vPoints[1]==null || vPoints[2]==null)
+        if (!controllerTip || !virtualSpace || !anchor || !table  ||vPoints[0]==null || vPoints[1]==null || vPoints[2]==null)
         {
             Debug.LogError("[Calib] Assign controllerTip, virtualSpace, anchor, and all 3 vPoints.");
             return;
@@ -146,25 +153,12 @@ public class Calibrate_UseFriendsLogic : MonoBehaviour
             vMatrix[i][1] = vp.position.z;
             vMatrix[i][2] = 1f;
 
-
-            // gpt: 
-            // --- pack the 3 correspondence points as COLUMNS [x; z; 1] ---
-            // REAL (rMatrix): columns = r0, r1, r2
-            // rMatrix.c0 = new float3(rPoints[0].position.x, rPoints[0].position.z, 1f);
-            // rMatrix.c1 = new float3(rPoints[1].position.x, rPoints[1].position.z, 1f);
-            // rMatrix.c2 = new float3(rPoints[2].position.x, rPoints[2].position.z, 1f);
-
-            // // VIRTUAL (vMatrix): columns = v0, v1, v2
-            // vMatrix.c0 = new float3(vPoints[0].position.x, vPoints[0].position.z, 1f);
-            // vMatrix.c1 = new float3(vPoints[1].position.x, vPoints[1].position.z, 1f);
-            // vMatrix.c2 = new float3(vPoints[2].position.x, vPoints[2].position.z, 1f);
         }
 
         // Solve affine in XZ: rotationMatrix = r * inverse(v)
         float3x3 rotationMatrix = math.mul(rMatrix, math.inverse(vMatrix));   // :contentReference[oaicite:5]{index=5}
 
         // sMatrix holds TWO rows we care about: current virtualSpace pos and anchor pos (friend did this)
-        // Row0 = virtualSpace (x,z,1), Row1 = anchor (x,z,1)
         float3x3 sMatrix = new float3x3();
         sMatrix[0][0] = virtualSpace.position.x;
         sMatrix[0][1] = virtualSpace.position.z;
@@ -173,14 +167,6 @@ public class Calibrate_UseFriendsLogic : MonoBehaviour
         sMatrix[1][0] = anchor.position.x;
         sMatrix[1][1] = anchor.position.z;
         sMatrix[1][2] = 1f;                                         // :contentReference[oaicite:6]{index=6}
-
-
-        // sMatrix columns = [virtualSpacePos, anchorPos, (unused)]
-        // gpt:
-        // sMatrix.c0 = new float3(virtualSpace.position.x, virtualSpace.position.z, 1f);
-        // sMatrix.c1 = new float3(anchor.position.x,       anchor.position.z,       1f);
-        // sMatrix.c2 = new float3(0f, 0f, 1f); // unused but keeps matrix well-formed
-
 
 
         // Transform those two rows by the solved matrix; this gives target XZ for rig + anchor
@@ -210,6 +196,45 @@ public class Calibrate_UseFriendsLogic : MonoBehaviour
             Vector3 delta = new Vector3(r0.x - vc0.x, 0f, r0.z - vc0.z);
             virtualSpace.position += delta;               // nudge rig so FL matches exactly
         }
+        // // =====================
+        // // Y CALIBRATION (table is child of virtualSpace)
+        // // =====================
+        // float avgWorldY =
+        //     (rPoints[0].position.y +
+        //     rPoints[1].position.y +
+        //     rPoints[2].position.y) / 3f;
+
+        // float localTableY = avgWorldY - virtualSpace.position.y;
+
+        // table.localPosition = new Vector3(
+        //     table.localPosition.x,
+        //     localTableY,
+        //     table.localPosition.z
+        // );
+
+        // =====================
+        // Y CALIBRATION (move virtualSpace so the TABLE lands at avg tip height)
+        // =====================
+        float targetWorldY =
+            (rPoints[0].position.y +
+            rPoints[1].position.y +
+            rPoints[2].position.y) / 3f;
+
+        targetWorldY += tableYOffset;
+
+        // tableLocalY is table's height within virtualSpace (doesn't change when moving virtualSpace)
+        float tableLocalY = table.localPosition.y;
+
+        // Move virtualSpace so that: table.worldY == targetWorldY
+        float newVirtualSpaceY = targetWorldY - tableLocalY;
+
+        virtualSpace.position = new Vector3(
+            virtualSpace.position.x,
+            newVirtualSpaceY,
+            virtualSpace.position.z
+        );
+
+
 
         if (verbose)
         {

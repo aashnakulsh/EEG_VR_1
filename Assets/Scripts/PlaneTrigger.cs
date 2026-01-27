@@ -9,6 +9,8 @@ public class PlaneTrigger : MonoBehaviour
     public int cubeFlag;
     private int planeFlag;
     public float timeHitPlane;
+    private float jitterEndTime;   
+
     [SerializeField] private EEGMarkerPatterns eeg;
 
 
@@ -20,7 +22,6 @@ public class PlaneTrigger : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         float currTime = Time.time;
-        float jitterTime = Random.Range(1f, 2f);
 
         // Find the most recent cube hit
         float latestCubeHitTime = 0f;
@@ -30,26 +31,46 @@ public class PlaneTrigger : MonoBehaviour
                 latestCubeHitTime = cube.timeHitCube;
         }
 
-        // allow randomized jitter time to pass + ensure plane can be triggered
-        if (planeFlag == 0)
+        // ensure plane can be triggered
+        if  (planeFlag == 0)
         {
             // sets planeFlag to -1 so that the Plane can't be triggered multiple times
             planeFlag = -1;
-            if (currTime - latestCubeHitTime >= jitterTime){
-                Debug.LogWarning("Plane triggered: advancing to next trial");
-                EventLogger_CSVWriter.Log("Plane Triggered");
+            Debug.LogWarning("Plane triggered: advancing to next trial");
+            EventLogger_CSVWriter.Log("Plane Triggered");
 
-                timeHitPlane = Time.time;
+            timeHitPlane = Time.time;
 
-                // Allows cubes to be hit
-                //reset cube trigger flag
-                ResetCubeFlag();
+            // Allows cubes to be hit
+            //reset cube trigger flag
+            ResetCubeFlag();
 
-                // Begins next trial
+            // Begins next trial
+            // StartCoroutine(trialManager.StartNextTrial());
+            // If jitter already ended, start immediately.
+            // If not, wait until jitterEndTime, then start.
+            if (currTime >= jitterEndTime)
+            {
                 StartCoroutine(trialManager.StartNextTrial());
+            }
+            else
+            {
+                StartCoroutine(WaitForJitterAndStart());
             }
         }
     }
+    private IEnumerator WaitForJitterAndStart()
+    {
+        float waitTime = Mathf.Max(0f, jitterEndTime - Time.time);
+        if (waitTime > 0f)
+        {
+            yield return new WaitForSeconds(waitTime);
+        }
+
+        StartCoroutine(trialManager.StartNextTrial());
+    }
+
+    
     public void ResetCubeFlag()
     {
         cubeFlag = 0;
@@ -60,6 +81,7 @@ public class PlaneTrigger : MonoBehaviour
         planeFlag = 0;
         // trial is over so:
         eeg?.MarkTrialEnd();
+        jitterEndTime = Time.time + Random.Range(1f, 2f);
     }
 
     public void ResetPlaneFlagFirst()
