@@ -43,9 +43,9 @@ public class CaliPhase : MonoBehaviour
 
         // Calibration FIRST
         if (calibrationLabel)
-            calibrationLabel.text = "Calibrate table now.\nPress SPACE when finished.";
+            calibrationLabel.text = "Allow researcher to calibrate the table.\n Please follow their instructions.";
 
-        waiting = true; // SPACE ends calibration now
+        waiting = true; // S ends calibration now
     }
 
 

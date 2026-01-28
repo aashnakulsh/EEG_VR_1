@@ -64,7 +64,7 @@ public class BreakUIController : MonoBehaviour
         }
 
         // Done with minimum break
-        countdownText.text = "Press SPACE when ready";
+        countdownText.text = "Tell the researcher when you are ready\n to continue. Take as long as you need.";
 
         yield return new WaitForEndOfFrame(); // prevent held-space skip
 
@@ -91,7 +91,7 @@ public class BreakUIController : MonoBehaviour
     public void ShowExperimentComplete(int trialNum, int totalTrials, int score, int totalPossibleScore)
     {
         breakPanel.SetActive(true);
-        breakMessageText.text = "Experiment Complete";
+        breakMessageText.text = "Congrats, the experiment is complete!";
         countdownText.text = "";
         trialCountText.text = $"Trial: {trialNum} / {totalTrials}";
         scoreText.text = $"Score: {score} / {totalPossibleScore}";
