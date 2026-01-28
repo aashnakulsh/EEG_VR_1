@@ -21,6 +21,7 @@ public class PlaneTrigger : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        // Debug.LogError($"[PlaneTrigger] enter t={Time.time:F3} frame={Time.frameCount} onBreak={trialManager.onBreak} planeFlag={planeFlag}");
         float currTime = Time.time;
 
         // Find the most recent cube hit

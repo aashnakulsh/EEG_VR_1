@@ -79,15 +79,6 @@ public class TrialManager : MonoBehaviour
     // EEG Marker code
     [SerializeField] private EEGMarkerPatterns eeg;
 
-    // [SerializeField] private GameObject eegObject;
-    // private EEGMarkerPatterns eeg;          
-    // private void Awake()
-    // {
-    //     if (eegObject != null)
-    //         eeg = eegObject.GetComponent<EEGMarkerPatterns>();
-    // }            
-
-        
     private void Start()
     {
         TrialLogger_CSVWriter.Init();
@@ -255,6 +246,7 @@ public class TrialManager : MonoBehaviour
         }
         else
         {
+            Debug.LogError("NONTARGET");
             eeg?.MarkNonTargetTrialStart();
         }
 

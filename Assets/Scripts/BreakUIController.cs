@@ -19,6 +19,8 @@ public class BreakUIController : MonoBehaviour
 
     public float totalBreakDuration;        // includes minimum break time + optional break time from the participant (in seconds)
     [SerializeField] private EEGMarkerPatterns eeg;
+    private static int _breakRunCounter = 0;
+
 
     private InputAction continueAction;     
     private bool spacePressed;
@@ -42,6 +44,9 @@ public class BreakUIController : MonoBehaviour
     // Is a coroutine 
     public IEnumerator ShowBreakUI(int breakSeconds, int trialNum, int totalTrials, int score, int totalPossibleScore)
     {
+        // int runId = ++_breakRunCounter;
+        // Debug.LogError($"[BreakUI] START runId={runId} t={Time.time:F3} frame={Time.frameCount}");
+
         float breakStartTime = Time.time;
         spacePressed = false;
 
@@ -84,7 +89,7 @@ public class BreakUIController : MonoBehaviour
         breakPanel.SetActive(false);
         EventLogger_CSVWriter.Log("Break Over");
         eeg?.MarkBlockStart();
-
+        // Debug.LogError($"[BreakUI] END   runId={runId} t={Time.time:F3} frame={Time.frameCount}");
     }
 
     // Called from TrialManager.cs when experiment is complete
