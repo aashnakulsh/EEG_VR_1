@@ -7976,7 +7976,7 @@ MonoBehaviour:
   planeTrigger: {fileID: 592522842}
   calibrationUI: {fileID: 1647396510}
   calibrationLabel: {fileID: 367407776}
-  preCalibrationRestSeconds: 0
+  preCalibrationRestSeconds: 15
   eeg: {fileID: 0}
 --- !u!1 &1094982800
 GameObject:
