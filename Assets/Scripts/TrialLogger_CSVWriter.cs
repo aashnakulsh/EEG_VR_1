@@ -32,4 +32,28 @@ public class TrialLogger_CSVWriter : MonoBehaviour
             writer.WriteLine($"{time},{participantID},{trialNumber},{targetTrial}, {ghostCube}, {hitCube},{targetCube},{mismatch}, {reactionTime:F3}");
         }
     }
+
+
+    /// <summary>
+    /// Writes a separator row so you can split the CSV into fixed-size blocks.
+    /// Keeps the same number of columns to avoid breaking basic CSV parsers.
+    /// </summary>
+    public static void LogSegmentMarker(int completedTrials, int segmentSize)
+    {
+        if (string.IsNullOrEmpty(filePath)) return;
+        if (segmentSize <= 0) return;
+        if (completedTrials <= 0) return;
+        if (completedTrials % segmentSize != 0) return;
+
+        string time = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+        int segmentIndex = completedTrials / segmentSize; // 1-based
+        string marker = $"# --- SEGMENT {segmentIndex} END (trials {completedTrials - segmentSize + 1}-{completedTrials}) ---";
+
+        using (StreamWriter writer = new StreamWriter(filePath, true))
+        {
+            // 9 columns total (match header)
+            writer.WriteLine($"{time},{participantID},{completedTrials},{marker},,,,,");
+        }
+    }
+
 }

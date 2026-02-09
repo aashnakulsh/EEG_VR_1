@@ -19,7 +19,7 @@ public class BreakUIController : MonoBehaviour
 
     public float totalBreakDuration;        // includes minimum break time + optional break time from the participant (in seconds)
     [SerializeField] private EEGMarkerPatterns eeg;
-    private static int _breakRunCounter = 0;
+    // private static int _breakRunCounter = 0;
 
 
     private InputAction continueAction;     

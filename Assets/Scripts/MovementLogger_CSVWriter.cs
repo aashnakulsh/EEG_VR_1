@@ -66,4 +66,28 @@ public class MovementLogger_CSVWriter : MonoBehaviour
             writer.WriteLine(string.Join(",", row));
         }
     }
+
+    // set by TrialManager so we can insert segment markers in this CSV 
+    public void LogSegmentMarker(int completedTrials, int segmentSize)
+    {
+        if (string.IsNullOrEmpty(filePath)) return;
+        if (segmentSize <= 0) return;
+        if (completedTrials <= 0) return;
+        if (completedTrials % segmentSize != 0) return;
+
+        string time = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+        int segmentIndex = completedTrials / segmentSize; // 1-based
+
+        // 7 columns total (matches header)
+        string[] row = new string[7];
+        row[0] = time;
+        row[1] = $"#SEGMENT_{segmentIndex}_END_after_trial_{completedTrials}";
+        row[2] = row[3] = row[4] = row[5] = row[6] = "";
+
+        using (StreamWriter writer = new StreamWriter(filePath, true))
+        {
+            writer.WriteLine(string.Join(",", row));
+        }
+    }
+
 }

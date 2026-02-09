@@ -76,8 +76,14 @@ public class TrialManager : MonoBehaviour
         public int trialsUntilEarliestStart;
     }
 
-    // EEG Marker code
+    [Header("EEG Marker")]
     [SerializeField] private EEGMarkerPatterns eeg;
+
+    [Header("CSV Segmentation")]
+    [Tooltip("Insert a separator row in the CSV logs every N completed trials. Set <= 0 to disable.")]
+    public int csvSegmentSize = 50;
+    [SerializeField] private MovementLogger_CSVWriter movementLogger;
+
 
     private void Start()
     {
@@ -210,6 +216,14 @@ public class TrialManager : MonoBehaviour
     public IEnumerator StartNextTrial()
     {
         tookBreak = false;
+        // CSV segmentation: when we *start* trial (N+1), currentTrial == N completed.
+        if (csvSegmentSize > 0 && currentTrial > 0 && currentTrial % csvSegmentSize == 0)
+        {
+            TrialLogger_CSVWriter.LogSegmentMarker(currentTrial, csvSegmentSize);
+            EventLogger_CSVWriter.LogSegmentMarker(currentTrial, csvSegmentSize);
+            movementLogger?.LogSegmentMarker(currentTrial, csvSegmentSize);
+        }
+
         if ((currentTrial != 0) && (currentTrial != totalTrials) && (currentTrial % breakInterval == 0))
         {
             eeg?.MarkBlockEnd();
@@ -246,7 +260,7 @@ public class TrialManager : MonoBehaviour
         }
         else
         {
-            Debug.LogError("NONTARGET");
+            // Debug.LogError("NONTARGET");
             eeg?.MarkNonTargetTrialStart();
         }
 
@@ -524,12 +538,12 @@ private GhostMoveAlert GetNextGhostMoveAlert(int n)
         var (cubeF, isTargetF) = trialSequence[t];
         if (isTargetF)
         {
-            if (cubeF != currGhost)
-            {
-                nextTargetIdx = t;
-                nextTargetCube = cubeF;
-                break;
-            }
+            // if (cubeF != currGhost)
+            // {
+            nextTargetIdx = t;
+            nextTargetCube = cubeF;
+            break;
+            // }
             // else: same cube as ghost → no physical move needed; keep searching
         }
     }

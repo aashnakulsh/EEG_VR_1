@@ -115,11 +115,11 @@ public class Calibrate_UseFriendsLogic : MonoBehaviour
         idx++;
 
         // green sphere marker
-        var s = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        s.transform.position = p;
-        s.transform.localScale = Vector3.one * markerSize;
-        var rend = s.GetComponent<Renderer>(); if (rend) rend.material.color = markerColor;
-        Destroy(s, markerLife);
+        // var s = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        // s.transform.position = p;
+        // s.transform.localScale = Vector3.one * markerSize;
+        // var rend = s.GetComponent<Renderer>(); if (rend) rend.material.color = markerColor;
+        // Destroy(s, markerLife);
 
         if (verbose) Debug.Log($"[Calib] Captured real point {idx-1} @ {p}");
 

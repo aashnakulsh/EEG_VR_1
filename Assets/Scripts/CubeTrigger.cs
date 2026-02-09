@@ -48,7 +48,7 @@ public class CubeTrigger : MonoBehaviour
             trialManager.ClearCubeHighlight();                    // Clears highlight
 
             // getting statistics for logging
-            float reactionTime = timeHitCube - planeTrigger.timeHitPlane;
+            float reactionTime = timeHitCube - trialManager.TrialStartTime;
             if (trialManager.tookBreak) {reactionTime = reactionTime-buic.totalBreakDuration;}
             int touchedIdx = trialManager.cubes.IndexOf(this.gameObject);
 
@@ -82,7 +82,7 @@ public class CubeTrigger : MonoBehaviour
 
             trialManager.totalPossibleScore += 5;
 
-            planeTrigger.timeHitPlane = -1f;
+            // planeTrigger.timeHitPlane = -1f;
 
         }
     }

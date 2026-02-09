@@ -8,7 +8,8 @@ public class PlaneTrigger : MonoBehaviour
     public TrialManager trialManager; 
     public int cubeFlag;
     private int planeFlag;
-    public float timeHitPlane;
+    // public float timeHitPlane;
+    // public float trialStartTime;
     private float jitterEndTime;   
 
     [SerializeField] private EEGMarkerPatterns eeg;
@@ -40,7 +41,7 @@ public class PlaneTrigger : MonoBehaviour
             Debug.LogWarning("Plane triggered: advancing to next trial");
             EventLogger_CSVWriter.Log("Plane Triggered");
 
-            timeHitPlane = Time.time;
+            // timeHitPlane = Time.time;
 
             // Allows cubes to be hit
             //reset cube trigger flag
@@ -67,7 +68,7 @@ public class PlaneTrigger : MonoBehaviour
         {
             yield return new WaitForSeconds(waitTime);
         }
-
+        // trialStartTime = Time.time;
         StartCoroutine(trialManager.StartNextTrial());
     }
 

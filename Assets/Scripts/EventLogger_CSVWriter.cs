@@ -48,4 +48,25 @@ public class EventLogger_CSVWriter : MonoBehaviour
 
         Debug.Log("Logged event: " + eventDescription);
     }
+
+    /// <summary>
+    /// Writes a visual separator row so you can split the CSV into fixed-size blocks.
+    /// </summary>
+    public static void LogSegmentMarker(int completedTrials, int segmentSize)
+    {
+        if (!isInitialized) return;
+        if (segmentSize <= 0) return;
+        if (completedTrials <= 0) return;
+        if (completedTrials % segmentSize != 0) return;
+
+        int segmentIndex = completedTrials / segmentSize; // 1-based
+        string time = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+        string marker = $"# --- SEGMENT {segmentIndex} END (after trial {completedTrials}) ---";
+
+        using (StreamWriter writer = new StreamWriter(filePath, true))
+        {
+            writer.WriteLine($"{time},{marker}");
+        }
+    }
+
 }

@@ -1536,7 +1536,6 @@ MonoBehaviour:
   - {fileID: 678471128}
   trialManager: {fileID: 1129724818}
   cubeFlag: 0
-  timeHitPlane: 0
   eeg: {fileID: 0}
 --- !u!135 &189075464
 SphereCollider:
@@ -4260,7 +4259,6 @@ MonoBehaviour:
   - {fileID: 678471128}
   trialManager: {fileID: 1129724818}
   cubeFlag: 0
-  timeHitPlane: 0
   eeg: {fileID: 1780580076}
 --- !u!54 &592522843
 Rigidbody:
@@ -8858,11 +8856,11 @@ MonoBehaviour:
   minTargetGap: 3
   maxTargetGap: 6
   n: 3
-  totalTrials: 10
+  totalTrials: 200
   targetTrialPercentage: 0.2
   isExperimentComplete: 0
   onBreak: 0
-  breakInterval: 5
+  breakInterval: 100
   breakUI: {fileID: 332175038}
   minimumBreakTime: 5
   tookBreak: 0
@@ -8877,6 +8875,8 @@ MonoBehaviour:
   maxTimeSeconds: 300
   generatedTrials: []
   eeg: {fileID: 1780580076}
+  csvSegmentSize: 50
+  movementLogger: {fileID: 364807677}
 --- !u!4 &1129724819
 Transform:
   m_ObjectHideFlags: 0
