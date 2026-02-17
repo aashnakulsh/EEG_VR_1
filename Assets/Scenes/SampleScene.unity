@@ -8208,8 +8208,8 @@ MonoBehaviour:
   - {fileID: 1960459621}
   - {fileID: 493374679}
   - {fileID: 921649135}
-  whichController: 2
-  beginButton: 1
+  whichController: 3
+  beginButton: 5
   recordButton: 8192
   verbose: 1
   markerSize: 0.02
@@ -8230,7 +8230,7 @@ MonoBehaviour:
   planeTrigger: {fileID: 592522842}
   calibrationUI: {fileID: 1647396510}
   calibrationLabel: {fileID: 367407776}
-  preCalibrationRestSeconds: 3
+  preCalibrationRestSeconds: 5
   eeg: {fileID: 1780580076}
 --- !u!1 &1094982800
 GameObject:
@@ -8856,13 +8856,13 @@ MonoBehaviour:
   minTargetGap: 3
   maxTargetGap: 6
   n: 3
-  totalTrials: 200
+  totalTrials: 50
   targetTrialPercentage: 0.2
   isExperimentComplete: 0
   onBreak: 0
   breakInterval: 100
   breakUI: {fileID: 332175038}
-  minimumBreakTime: 5
+  minimumBreakTime: 60
   tookBreak: 0
   currentTrial: 0
   ghostCubeIdx: -1
@@ -12650,7 +12650,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5d0aa3d89bdab44a9d151f4866a7ae7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  portName: COM3
+  portName: COM4
   baudRate: 115200
   defaultPulseMs: 5
 --- !u!114 &1780580076
@@ -14536,7 +14536,7 @@ MonoBehaviour:
   plane: {fileID: 592522841}
   table: {fileID: 641606729}
   elbowPoint: {fileID: 1113587958}
-  tipToElbowLength: 0.46
+  tipToElbowLength: 0.4
   planeOffsetBelowTipToElbow: 0.03
 --- !u!4 &2088236477
 Transform:

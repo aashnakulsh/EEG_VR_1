@@ -1536,7 +1536,7 @@ MonoBehaviour:
   - {fileID: 678471128}
   trialManager: {fileID: 1129724818}
   cubeFlag: 0
-  timeHitPlane: 0
+  eeg: {fileID: 0}
 --- !u!135 &189075464
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -2019,7 +2019,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &315979908
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2519,6 +2519,7 @@ MonoBehaviour:
   trialCountText: {fileID: 1491540093}
   scoreText: {fileID: 2020874760}
   totalBreakDuration: 0
+  eeg: {fileID: 0}
 --- !u!1 &342069345
 GameObject:
   m_ObjectHideFlags: 0
@@ -4135,7 +4136,7 @@ MonoBehaviour:
   - {fileID: 678471128}
   trialManager: {fileID: 1129724818}
   cubeFlag: 0
-  timeHitPlane: 0
+  eeg: {fileID: 0}
 --- !u!54 &592522843
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -4421,7 +4422,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &634567136
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8088,13 +8089,15 @@ MonoBehaviour:
   controllerTip: {fileID: 1468548370}
   virtualSpace: {fileID: 1975927349}
   anchor: {fileID: 2132233164}
+  table: {fileID: 641606733}
+  tableYOffset: -0.11176
   vPoints:
   - {fileID: 1960459621}
   - {fileID: 493374679}
   - {fileID: 921649135}
   whichController: 2
   beginButton: 1
-  recordButton: 8192
+  recordButton: 2105344
   verbose: 1
   markerSize: 0.02
   markerLife: 30
@@ -8741,6 +8744,9 @@ MonoBehaviour:
   scriptPath: Scripts/trial_generator_ortools.py
   maxTimeSeconds: 300
   generatedTrials: []
+  eeg: {fileID: 0}
+  csvSegmentSize: 50
+  movementLogger: {fileID: 0}
 --- !u!4 &1129724819
 Transform:
   m_ObjectHideFlags: 0

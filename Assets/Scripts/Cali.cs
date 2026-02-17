@@ -60,11 +60,21 @@ public class Calibrate_UseFriendsLogic : MonoBehaviour
 
     void Update()
     {
-        if (!calibrating && OVRInput.GetDown(beginButton, whichController))
-            Begin();
+        // if (!calibrating && OVRInput.GetDown(beginButton, whichController))
+        //     Begin();
 
-        if (calibrating && OVRInput.GetDown(recordButton, whichController))
+        // if (calibrating && OVRInput.GetDown(recordButton, whichController))
+        //     Capture();
+        if (!calibrating && (OVRInput.GetDown(beginButton, OVRInput.Controller.RTouch) ||
+            OVRInput.GetDown(beginButton, OVRInput.Controller.LTouch)))
+            Begin();
+            
+        if (calibrating && (OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger, OVRInput.Controller.RTouch) ||
+            OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger, OVRInput.Controller.LTouch)))
             Capture();
+
+        // if (calibrating && OVRInput.GetDown(recordButton, whichController))
+        //     Capture();
     }
 
     void Begin()
@@ -98,9 +108,9 @@ public class Calibrate_UseFriendsLogic : MonoBehaviour
 
         if (verbose)
         {
-            Debug.Log("--------- Calibration ---------");
-            Debug.Log("Click order with trigger: 0=Front-Left, 1=Front-Right, 2=Back-Left");
-            Debug.Log("--------------------------------------");
+            Debug.LogError("--------- Calibration ---------");
+            Debug.LogError("Click order with trigger: 0=Front-Left, 1=Front-Right, 2=Back-Left");
+            Debug.LogError("--------------------------------------");
         }
         EventLogger_CSVWriter.Log("Manual 3-Point Calibration Begun");
 
@@ -115,19 +125,19 @@ public class Calibrate_UseFriendsLogic : MonoBehaviour
         idx++;
 
         // green sphere marker
-        // var s = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        // s.transform.position = p;
-        // s.transform.localScale = Vector3.one * markerSize;
-        // var rend = s.GetComponent<Renderer>(); if (rend) rend.material.color = markerColor;
-        // Destroy(s, markerLife);
+        var s = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        s.transform.position = p;
+        s.transform.localScale = Vector3.one * markerSize;
+        var rend = s.GetComponent<Renderer>(); if (rend) rend.material.color = markerColor;
+        Destroy(s, markerLife);
 
-        if (verbose) Debug.Log($"[Calib] Captured real point {idx-1} @ {p}");
+        if (verbose) Debug.LogError($"[Calib] Captured real point {idx-1} @ {p}");
 
         if (idx == 3)
         {
             Calibrate();            
             calibrating = false;
-            if (verbose) Debug.Log("[Calib] ✅ Done.");
+            if (verbose) Debug.LogError("[Calib] ✅ Done.");
             EventLogger_CSVWriter.Log("Manual 3-Point Calibration Over");
         }
     }
@@ -238,8 +248,8 @@ public class Calibrate_UseFriendsLogic : MonoBehaviour
 
         if (verbose)
         {
-            Debug.Log($"[Calib] rotationMatrix:\n{rotationMatrix}");
-            Debug.Log($"[Calib] virtualSpace -> {virtualSpace.position}, yaw -> {virtualSpace.rotation.eulerAngles.y:F1}°");
+            Debug.LogError($"[Calib] rotationMatrix:\n{rotationMatrix}");
+            Debug.LogError($"[Calib] virtualSpace -> {virtualSpace.position}, yaw -> {virtualSpace.rotation.eulerAngles.y:F1}°");
         }
     }
 }
